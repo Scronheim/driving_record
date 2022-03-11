@@ -5,16 +5,6 @@
       <v-card-text>
         <v-row>
           <v-col>
-            <v-btn small color="#FFE4B5">Нет записи</v-btn>
-            <v-btn small color="#b2D179">Свободно</v-btn>
-            <v-btn small color="#D24A43">Занято</v-btn>
-            <v-btn small color="#F4A460">Неявка</v-btn>
-            <v-btn small color="#008CFF">Экзамен</v-btn>
-            <v-btn small color="#B88527">Внутренний экзамен</v-btn>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
             <v-menu>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -38,6 +28,56 @@
                   <v-list-item-title>Месяц</v-list-item-title>
                 </v-list-item>
               </v-list>
+            </v-menu>
+            <v-menu
+                :close-on-content-click="false"
+                :nudge-width="200"
+                offset-x
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                    color="indigo"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  <v-icon>mdi-help-circle</v-icon>
+                </v-btn>
+              </template>
+
+              <v-card>
+                <v-list dense>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="#FFE4B5">Нет записи</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="success">Свободно</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="error">Занято</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="#F4A460">Неявка</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="#008CFF">Экзамен</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-btn small color="#B88527">Внутренний экзамен</v-btn>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card>
             </v-menu>
           </v-col>
         </v-row>
@@ -91,7 +131,18 @@
             @click:event="showEventDialog"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
-        ></v-calendar>
+            :first-interval="5"
+            :interval-minutes="90"
+            :interval-count="10"
+            :interval-format="intervalFormatter"
+        >
+          <template v-slot:event="{ event }">
+            <div class="v-event-draggable">
+              <strong>{{ event.name }}</strong>
+              {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
+            </div>
+          </template>
+        </v-calendar>
       </v-card-text>
     </v-card>
 
@@ -143,6 +194,9 @@
     <v-dialog v-model="addEventDialog" max-width="60%" :fullscreen="$vuetify.breakpoint.mobile">
       <v-card>
         <v-card-title>Добавить событие</v-card-title>
+        <v-card-text>
+
+        </v-card-text>
       </v-card>
     </v-dialog>
   </v-container>
@@ -186,7 +240,7 @@ export default {
     ],
     mode: 'stack',
     modes: ['stack', 'column'],
-    weekday: [0, 1, 2, 3, 4, 5, 6],
+    weekday: [1, 2, 3, 4, 5, 6, 0],
     focus: '',
     names: ['Нет записи', 'Свободно', 'Занято', 'Неявка', 'Экзамен', 'Внутренний экзамен'],
     eventDialog: false,
@@ -213,6 +267,16 @@ export default {
     showEventDialog(event) {
       this.currentEvent = event.event
       this.eventDialog = true
+    },
+    intervalFormatter(locale) {
+      return locale.time
+    },
+    formatEventTime(date) {
+      return new Date(date).toLocaleTimeString('ru-RU', {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      })
     }
   }
 }

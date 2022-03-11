@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
     <v-app-bar app>
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
@@ -32,7 +31,7 @@
       <v-spacer/>
     </v-app-bar>
 
-    <v-navigation-drawer app :mini-variant="false" v-model="drawer">
+    <v-navigation-drawer app :mini-variant="$vuetify.breakpoint.mobile" v-model="drawer">
       <LeftMenu v-if="$store.getters.isLogin"/>
       <LoginForm v-else/>
     </v-navigation-drawer>

@@ -16,14 +16,8 @@ const eventSchema = new mongoose.Schema({
   end: {
     type: Date,
   },
-  name: {
-    type: String,
-  },
   timed: {
     type: Boolean,
-  },
-  color: {
-    type: String,
   },
 }, {
   versionKey: false,

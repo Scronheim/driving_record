@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 const userModule = {
   state: () => ({
@@ -61,8 +61,8 @@ const userModule = {
     async getUserEvents({commit}, userId) {
       const {data} = await axios.get(`/api/events?id=${userId}`)
       data.data.forEach((e) => {
-        e.start = new Date(e.start)
-        e.end = new Date(e.end)
+        e.start = dayjs(e.start).format('YYYY-MM-DD HH:mm')
+        e.end = dayjs(e.end).format('YYYY-MM-DD HH:mm')
         e.name = e.type.name
         e.color = e.type.color
         // e.start = dayjs(e.start).format('YYYY-MM-DD hh:mm:ss')

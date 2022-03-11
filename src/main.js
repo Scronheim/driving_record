@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import _ from 'lodash'
 import vuetify from './plugins/vuetify'
 import Toast from 'vue-toastification'
@@ -11,6 +13,11 @@ import 'vue-toastification/dist/index.css'
 Vue.config.productionTip = false
 Vue.prototype.$dayjs = dayjs
 Vue.prototype.$_ = _
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+dayjs.tz.setDefault('Asia/Yekaterinburg')
 
 Vue.use(Toast, {
   transition: 'Vue-Toastification__bounce',
