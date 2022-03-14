@@ -19,11 +19,10 @@ app.use(cors())
 app.use(fileUpload({ createParentPath: true }))
 
 require('./routes/auth.route')(app)
-require('./routes/user.route')(app)
+require('./routes/instructor.route')(app)
+require('./routes/students.route')(app)
 require('./routes/event.route')(app)
-// require('./routes/city.route')(app)
-// require('./routes/request.route')(app)
-// require('./routes/instructions.route')(app)
+require('./routes/school.route')(app)
 
 app.use(router)
 

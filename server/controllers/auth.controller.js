@@ -1,19 +1,35 @@
+const mongoose = require('mongoose')
 const {jsonResponse} = require('../utils')
 
 const config = require("../config/auth.config")
 const db = require("../schemas")
-const User = db.user
+const Student = db.student
+const Instructor = db.instructor
 const Role = db.role
 
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
+const ObjectId = mongoose.Types.ObjectId
+
+exports.aboutMe = async (req, res) => {
+  const user = await getStudentById(req.userId)
+  if (user[0]) {
+    return jsonResponse(res, user[0])
+  }
+  const instructor = await getInstructorById(req.userId)
+  return jsonResponse(res, instructor[0])
+}
+
+exports.getRoles = async (req, res) => {
+  const roles = await Role.find({})
+  return jsonResponse(res, roles)
+}
 
 exports.signup = (req, res) => {
-  const user = new User({
+  const user = new Student({
     name: req.body.name,
     phone: req.body.phone,
     email: req.body.email,
-    car: req.body.car,
     school: req.body.school,
     disabled: req.body.disabled,
     password: bcrypt.hashSync(req.body.password, 8)
@@ -62,7 +78,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = async (req, res) => {
-  let user = await User.aggregate([
+  let user = await Student.aggregate([
     {
       $match: {
         email: {$regex: req.body.email, $options: 'i'}
@@ -74,6 +90,24 @@ exports.signin = async (req, res) => {
         localField: 'roles',
         foreignField: '_id',
         as: 'roles'
+      }
+    },
+    {
+      $lookup: {
+        from: 'schools',
+        localField: 'school',
+        foreignField: '_id',
+        as: 'school'
+      }
+    },
+    {$unwind: {
+        path: '$role',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$school',
+        preserveNullAndEmptyArrays: true,
       }
     },
   ]).catch((err) => {
@@ -106,4 +140,89 @@ exports.signin = async (req, res) => {
     token: token
   }
   return jsonResponse(res, response)
+}
+
+async function getStudentById(id) {
+  return Student.aggregate([
+    {
+      $match: {
+        _id: ObjectId(id)
+      }
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'role',
+        foreignField: '_id',
+        as: 'role'
+      }
+    },
+    {
+      $lookup: {
+        from: 'schools',
+        localField: 'school',
+        foreignField: '_id',
+        as: 'school'
+      }
+    },
+    {$unwind: {
+        path: '$role',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+  ]).project({password: 0}) //exclude password field
+}
+
+async function getInstructorById(id) {
+  return Instructor.aggregate([
+    {
+      $match: {
+        _id: ObjectId(id)
+      }
+    },
+    {
+      $lookup: {
+        from: 'roles',
+        localField: 'role',
+        foreignField: '_id',
+        as: 'role'
+      }
+    },
+    {
+      $lookup: {
+        from: 'cars',
+        localField: 'car',
+        foreignField: '_id',
+        as: 'car'
+      }
+    },
+    {
+      $lookup: {
+        from: 'schools',
+        localField: 'school',
+        foreignField: '_id',
+        as: 'school'
+      }
+    },
+    {$unwind: {
+        path: '$role',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$car',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+  ]).project({password: 0}) //exclude password field
 }

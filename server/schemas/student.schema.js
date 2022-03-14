@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const userSchema = new mongoose.Schema({
+const studentsSchema = new mongoose.Schema({
   name: {
     type: String,
   },
@@ -10,28 +10,34 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  car: {
-    type: mongoose.Types.ObjectId,
-  },
   school: {
     type: mongoose.Types.ObjectId,
   },
-  roles: [
-    {
-      type: mongoose.Types.ObjectId,
-    }
-  ],
+  role: {
+    type: mongoose.Types.ObjectId,
+  },
   phone: {
     type: String,
   },
   disabled: {
     type: Boolean,
-  }
+  },
+  payments: [
+    {
+      date: {
+        type: Date,
+      },
+      type: {
+        type: mongoose.Types.ObjectId
+      },
+      sum: Number,
+    }
+  ],
 }, {
   versionKey: false,
   timestamps: true,
 })
 
-const User = mongoose.model('users', userSchema, 'users')
+const Student = mongoose.model('students', studentsSchema, 'students')
 
-module.exports = User
+module.exports = Student

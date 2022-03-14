@@ -9,6 +9,6 @@ const schoolSchema = new mongoose.Schema({
   timestamps: true,
 })
 
-const Car = mongoose.model('schools', schoolSchema, 'schools')
+const School = mongoose.model('schools', schoolSchema, 'schools')
 
-module.exports = Car
+module.exports = School

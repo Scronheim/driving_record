@@ -41,6 +41,18 @@ Vue.filter('humanDateTime', function(date) {
   return dayjs(date).format('DD.MM.YYYY hh:mm:ss')
 })
 
+Vue.filter('humanDate', function(date) {
+  return dayjs(date).format('DD.MM.YYYY')
+})
+
+Vue.filter('paymentType', function(type) {
+  if (store.getters.paymentTypes.length > 0) {
+    return store.getters.paymentTypes.find((t) => {
+      return t._id === type
+    }).name
+  }
+})
+
 new Vue({
   router,
   store,

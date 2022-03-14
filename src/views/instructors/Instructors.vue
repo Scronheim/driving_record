@@ -32,10 +32,7 @@ export default {
   name: 'Instructors',
   computed: {
     chunkedInstructors() {
-      const instructors = this.$store.getters.users.filter((u) => {
-        return u.role._id === '622062c2056fad1a42ab2cf0'
-      })
-      return this.$_.chunk(instructors, 3)
+      return this.$_.chunk(this.$store.getters.instructors, 3)
     }
   },
   data: () => ({

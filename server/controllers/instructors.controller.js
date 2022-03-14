@@ -2,13 +2,12 @@ const axios = require('axios')
 const mongoose = require('mongoose')
 const {jsonResponse} = require('../utils')
 const db = require('../schemas')
-const User = db.user
-const Role = db.role
+const Instructor = db.instructor
 
 const ObjectId = mongoose.Types.ObjectId
 
-exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.body._id, req.body, {new: true}).then(async () => {
+exports.updateInstructor = (req, res) => {
+  Instructor.findByIdAndUpdate(req.body._id, req.body, {new: true}).then(async () => {
     const user = await getUserById(req.body._id)
     return jsonResponse(res, user[0])
   }).catch((err) => {
@@ -16,23 +15,13 @@ exports.updateUser = (req, res) => {
   })
 }
 
-exports.aboutMe = async (req, res) => {
-  const user = await getUserById(req.userId)
-  return jsonResponse(res, user[0])
-}
-
 exports.getUsers = async (req, res) => {
   const users = await getUsers()
   return jsonResponse(res, users)
 }
 
-exports.getRoles = async (req, res) => {
-  const roles = await Role.find({})
-  return jsonResponse(res, roles)
-}
-
-exports.insertUser = async (req, res) => {
-  const user = new User(req.body)
+exports.insertInstructor = async (req, res) => {
+  const user = new Instructor(req.body)
   await user.save()
   return jsonResponse(res, user)
 }
@@ -49,7 +38,7 @@ exports.verifyRecaptchaToken = async (req, res) => {
 }
 
 async function getUserById(id) {
-  return User.aggregate([
+  return Instructor.aggregate([
     {
       $match: {
         _id: ObjectId(id)
@@ -79,13 +68,26 @@ async function getUserById(id) {
         as: 'school'
       }
     },
-    {$unwind: '$role'},
-    // {$unwind: '$school'},
+    {$unwind: {
+        path: '$role',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$car',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
   ]).project({password: 0}) //exclude password field
 }
 
 async function getUsers() {
-  return User.aggregate([
+  return Instructor.aggregate([
     {
       $lookup: {
         from: 'roles',
@@ -110,8 +112,20 @@ async function getUsers() {
         as: 'school'
       }
     },
-    {$unwind: '$car'},
-    {$unwind: '$school'},
-    {$unwind: '$role'},
+    {$unwind: {
+        path: '$role',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$car',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
   ]).project({password: 0}) //exclude password field
 }

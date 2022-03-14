@@ -31,9 +31,8 @@
       <v-spacer/>
     </v-app-bar>
 
-    <v-navigation-drawer app :mini-variant="$vuetify.breakpoint.mobile" v-model="drawer">
-      <LeftMenu v-if="$store.getters.isLogin"/>
-      <LoginForm v-else/>
+    <v-navigation-drawer app v-model="drawer">
+      <LeftMenu/>
     </v-navigation-drawer>
 
     <v-main>
@@ -44,16 +43,17 @@
 
 <script>
 import LeftMenu from '@/components/LeftMenu'
-import LoginForm from '@/components/LoginForm'
 export default {
   name: 'App',
-  components: {LeftMenu, LoginForm},
+  components: {LeftMenu},
   mounted() {
     this.$vuetify.theme.dark = true
     this.$store.commit('getToken')
     if (this.$store.getters.token) {
       this.$store.dispatch('aboutMe')
-      this.$store.dispatch('getUsers')
+      this.$store.dispatch('getStudents')
+      this.$store.dispatch('getInstructors')
+      this.$store.dispatch('getPaymentTypes')
       this.$store.dispatch('getEventTypes')
       this.$store.dispatch('getRoles')
     }

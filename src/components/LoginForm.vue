@@ -40,6 +40,15 @@
                       :type="e1 ? 'password' : 'text'"
                       v-model="confirmPassword"
         />
+        <v-select dense
+                  solo
+                  label="Адрес школы"
+                  :items="$store.getters.schools"
+                  item-text="address"
+                  item-value="_id"
+                  :rules="inputRules"
+                  v-model="user.school"
+        />
         <v-btn text color="success" @click="register">Регистрация</v-btn>
         <v-btn text color="primary" @click="registerForm = false">Форма входа</v-btn>
       </v-card-text>
@@ -62,6 +71,7 @@
                       @click:append="e1 = !e1"
                       :type="e1 ? 'password' : 'text'"
                       v-model="user.password"
+                      @keyup.enter="login"
         />
         <v-btn text color="success" @click="login">Войти</v-btn>
         <v-btn text color="primary" @click="registerForm = true">Регистрация</v-btn>
@@ -73,6 +83,9 @@
 <script>
 export default {
   name: "LoginForm",
+  mounted() {
+    this.$store.dispatch('getSchools')
+  },
   data: () => ({
     e1: true,
     inputRules: [

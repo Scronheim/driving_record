@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import router from '@/router/index'
 
 const userModule = {
   state: () => ({
@@ -12,14 +13,19 @@ const userModule = {
       cityId: null,
       city: {},
       role: {},
+      school: {},
     },
     token: null,
-    users: [],
+    students: [],
     roles: [],
     userEvents: [],
     eventTypes: [],
+    paymentTypes: [],
   }),
   mutations: {
+    setPaymentTypes(state, types) {
+      state.paymentTypes = types
+    },
     setEventTypes(state, types) {
       state.eventTypes = types
     },
@@ -38,8 +44,8 @@ const userModule = {
     setUser(state, payload) {
       state.user = payload
     },
-    setUsers(state, payload) {
-      state.users = payload
+    setStudents(state, payload) {
+      state.students = payload
     },
     clearUser(state) {
       state.user = {
@@ -49,11 +55,16 @@ const userModule = {
         avatar: null,
         cityId: null,
         city: {},
-        roles: []
+        roles: [],
+        school: {},
       }
     }
   },
   actions: {
+    async getPaymentTypes({commit}) {
+      const {data} = await axios.get('/api/payment_types')
+      commit('setPaymentTypes', data.data)
+    },
     async getEventTypes({commit}) {
       const {data} = await axios.get('/api/event_types')
       commit('setEventTypes', data.data)
@@ -77,9 +88,9 @@ const userModule = {
       const {data} = await axios.get(`/api/roles`)
       commit('setRoles', data.data)
     },
-    async getUsers({commit}) {
-      const {data} = await axios.get(`/api/users`)
-      commit('setUsers', data.data)
+    async getStudents({commit}) {
+      const {data} = await axios.get(`/api/students`)
+      commit('setStudents', data.data)
     },
     async searchCity(context, payload) {
       return await axios.get(`/api/cities?search=${payload}`)
@@ -93,16 +104,19 @@ const userModule = {
     async aboutMe({commit}) {
       const token = localStorage.getItem('token')
       axios.defaults.headers.common['x-access-token'] = token
-      const {data} = await axios.get('/api/user/me', {headers: {'x-access-token': token}})
+      const {data} = await axios.get('/api/me', {headers: {'x-access-token': token}})
       commit('setUser', data.data)
     },
-    async login({commit}, payload) {
+    async login({commit, dispatch}, payload) {
       try {
         const {data} = await axios.post('/api/auth/signin', payload)
         commit('setUser', data.data.user)
         localStorage.setItem('token', data.data.token)
         axios.defaults.headers.common['x-access-token'] = data.data.token
-        console.log(data.data.token)
+        dispatch('getStudents')
+        dispatch('getEventTypes')
+        dispatch('getRoles')
+        router.push('/profile')
       } catch (e) {
         Vue.$toast.error(e.response.data.error)
         localStorage.removeItem('token')
@@ -115,14 +129,16 @@ const userModule = {
       localStorage.removeItem('token')
       delete axios.defaults.headers.common['x-access-token']
       commit('clearUser')
+      router.push('/')
     }
   },
   getters: {
     token: state => state.token,
     userEvents: state => state.userEvents,
     eventTypes: state => state.eventTypes,
+    paymentTypes: state => state.paymentTypes,
     user: state => state.user,
-    users: state => state.users,
+    students: state => state.students,
     roles: state => state.roles,
     isLogin: state => !!state.user._id,
     isAdmin: function (state) {

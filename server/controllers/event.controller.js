@@ -25,7 +25,7 @@ async function getUserEvents(userId) {
   return Event.aggregate([
     {
       $match: {
-        instructor: ObjectId(userId)
+        $or: [{instructor: ObjectId(userId)}, {student: ObjectId(userId)}]
       }
     },
     {
@@ -38,7 +38,7 @@ async function getUserEvents(userId) {
     },
     {
       $lookup: {
-        from: 'users',
+        from: 'instructors',
         localField: 'instructor',
         foreignField: '_id',
         as: 'instructor'
@@ -46,7 +46,7 @@ async function getUserEvents(userId) {
     },
     {
       $lookup: {
-        from: 'users',
+        from: 'students',
         localField: 'student',
         foreignField: '_id',
         as: 'student'

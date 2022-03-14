@@ -210,8 +210,8 @@ export default {
   },
   computed: {
     instructor() {
-      if (this.$store.getters.users.length > 0) {
-        return this.$store.getters.users.find((u) => {
+      if (this.$store.getters.instructors.length > 0) {
+        return this.$store.getters.instructors.find((u) => {
           return u._id === this.$route.params.id
         })
       }
