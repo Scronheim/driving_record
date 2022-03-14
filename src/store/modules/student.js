@@ -23,6 +23,10 @@ const userModule = {
     paymentTypes: [],
   }),
   mutations: {
+    removeEvent(state, index) {
+      state.userEvents.splice(index)
+      console.log(index, state.userEvents)
+    },
     setPaymentTypes(state, types) {
       state.paymentTypes = types
     },

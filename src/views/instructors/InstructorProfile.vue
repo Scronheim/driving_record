@@ -131,7 +131,7 @@
             @click:event="showEventDialog"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
-            :first-interval="5"
+            first-time="08:00"
             :interval-minutes="90"
             :interval-count="10"
             :interval-format="intervalFormatter"
