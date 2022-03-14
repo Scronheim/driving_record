@@ -14,12 +14,12 @@ const schoolModule = {
     },
   },
   actions: {
-    async getSchools({commit}) {
-      const {data} = await axios.get('/api/schools')
+    async getSchools({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/schools`)
       commit('setSchools', data.data)
     },
-    async getGroupsBySchoolId({commit}, id) {
-      const {data} = await axios.get(`/api/schools/${id}`)
+    async getGroupsBySchoolId({commit, rootState}, id) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/schools/${id}`)
       commit('setSchoolGroups', data.data)
     },
   },

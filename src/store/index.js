@@ -8,13 +8,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-
+    apiUrl: 'http://89.223.127.100:3000',
   },
-  mutations: {
-
-  },
-  actions: {
-  },
+  mutations: {},
+  actions: {},
   modules: {
     student: studentModule,
     instructors: instructorModule,

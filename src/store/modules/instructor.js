@@ -10,8 +10,8 @@ const instructorModule = {
     },
   },
   actions: {
-    async getInstructors({commit}) {
-      const {data} = await axios.get('/api/instructors')
+    async getInstructors({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/instructors`)
       commit('setInstructors', data.data)
     },
   },

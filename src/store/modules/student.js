@@ -61,16 +61,16 @@ const userModule = {
     }
   },
   actions: {
-    async getPaymentTypes({commit}) {
-      const {data} = await axios.get('/api/payment_types')
+    async getPaymentTypes({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/payment_types`)
       commit('setPaymentTypes', data.data)
     },
-    async getEventTypes({commit}) {
-      const {data} = await axios.get('/api/event_types')
+    async getEventTypes({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/event_types`)
       commit('setEventTypes', data.data)
     },
-    async getUserEvents({commit}, userId) {
-      const {data} = await axios.get(`/api/events?id=${userId}`)
+    async getUserEvents({commit, rootState}, userId) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/events?id=${userId}`)
       data.data.forEach((e) => {
         e.start = dayjs(e.start).format('YYYY-MM-DD HH:mm')
         e.end = dayjs(e.end).format('YYYY-MM-DD HH:mm')
@@ -81,35 +81,35 @@ const userModule = {
       })
       commit('setUserEvents', data.data)
     },
-    async verifyRecaptchaToken(context, token) {
-      return await axios.post('/api/recaptcha', {token})
+    async verifyRecaptchaToken({rootState}, token) {
+      return await axios.post(`${rootState.apiUrl}/api/recaptcha`, {token})
     },
-    async getRoles({commit}) {
-      const {data} = await axios.get(`/api/roles`)
+    async getRoles({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/roles`)
       commit('setRoles', data.data)
     },
-    async getStudents({commit}) {
-      const {data} = await axios.get(`/api/students`)
+    async getStudents({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/api/students`)
       commit('setStudents', data.data)
     },
-    async searchCity(context, payload) {
-      return await axios.get(`/api/cities?search=${payload}`)
+    async searchCity({rootState}, payload) {
+      return await axios.get(`${rootState.apiUrl}/api/cities?search=${payload}`)
     },
-    async insertUser(context, payload) {
-      return await axios.post('/api/user', payload)
+    async insertUser({rootState}, payload) {
+      return await axios.post(`${rootState.apiUrl}/api/user`, payload)
     },
-    async updateUser(context, payload) {
-      return await axios.patch('/api/user', payload)
+    async updateUser({rootState}, payload) {
+      return await axios.patch(`${rootState.apiUrl}/api/user`, payload)
     },
-    async aboutMe({commit}) {
+    async aboutMe({commit, rootState}) {
       const token = localStorage.getItem('token')
       axios.defaults.headers.common['x-access-token'] = token
-      const {data} = await axios.get('/api/me', {headers: {'x-access-token': token}})
+      const {data} = await axios.get(`${rootState.apiUrl}/api/me`, {headers: {'x-access-token': token}})
       commit('setUser', data.data)
     },
-    async login({commit, dispatch}, payload) {
+    async login({commit, dispatch, rootState}, payload) {
       try {
-        const {data} = await axios.post('/api/auth/signin', payload)
+        const {data} = await axios.post(`${rootState.apiUrl}/api/auth/signin`, payload)
         commit('setUser', data.data.user)
         localStorage.setItem('token', data.data.token)
         axios.defaults.headers.common['x-access-token'] = data.data.token
@@ -122,8 +122,8 @@ const userModule = {
         localStorage.removeItem('token')
       }
     },
-    register(context, payload) {
-      return axios.post('/api/auth/signup', payload)
+    register({rootState}, payload) {
+      return axios.post(`${rootState.apiUrl}/api/auth/signup`, payload)
     },
     logout({commit}) {
       localStorage.removeItem('token')
