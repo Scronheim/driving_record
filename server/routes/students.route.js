@@ -10,7 +10,7 @@ module.exports = function(app) {
     next()
   })
   app.get('/api/students', controller.getStudents)
+  app.patch('/api/students', [authJwt.verifyToken], controller.updateStudent)
   app.get('/api/payment_types', [authJwt.verifyToken], controller.getPaymentTypes)
   // app.post('/api/student', controller.insertStudent)
-  app.patch('/api/student', [authJwt.verifyToken], controller.updateStudent)
 }

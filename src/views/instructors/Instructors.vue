@@ -12,12 +12,12 @@
                 </v-avatar>
               </v-col>
               <v-col>
-                <v-btn x-large block text color="primary">{{ instructor.car.model }}</v-btn>
-                <v-btn x-large block text color="primary">{{ instructor.car.lpn }}</v-btn>
-                <v-btn x-large block text color="primary">{{ instructor.car.transmission }}</v-btn>
-                <v-btn x-large block text color="primary">{{ instructor.car.color }}</v-btn>
-                <v-btn x-large block text color="primary">{{ instructor.school.address }}</v-btn>
-                <v-btn x-large block text color="primary">{{ instructor.phone }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.car.model }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.car.lpn }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.car.transmission }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.car.color }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.school.address }}</v-btn>
+                <v-btn block text color="primary">{{ instructor.phone }}</v-btn>
               </v-col>
             </v-row>
           </v-card-text>
@@ -32,7 +32,7 @@ export default {
   name: 'Instructors',
   computed: {
     chunkedInstructors() {
-      return this.$_.chunk(this.$store.getters.instructors, 3)
+      return this.$_.chunk(this.$store.getters.instructors, 5)
     }
   },
   data: () => ({

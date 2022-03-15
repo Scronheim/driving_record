@@ -25,59 +25,22 @@ exports.getRoles = async (req, res) => {
   return jsonResponse(res, roles)
 }
 
-exports.signup = (req, res) => {
+exports.signUp = (req, res) => {
   const user = new Student({
     name: req.body.name,
     phone: req.body.phone,
     email: req.body.email,
     school: req.body.school,
     disabled: req.body.disabled,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
+    added: req.body.added
   });
 
-  user.save((err, user) => {
-    if (err) {
-      return jsonResponse(res, null, err, false, 500)
-    }
-
-    if (req.body.roles) {
-      Role.find(
-        {
-          name: { $in: req.body.roles }
-        },
-        (err, roles) => {
-          if (err) {
-            return jsonResponse(res, null, err, false, 500)
-          }
-
-          user.roles = roles.map(role => role._id)
-          user.save(err => {
-            if (err) {
-              return jsonResponse(res, null, err, false, 500)
-            }
-            return jsonResponse(res, user, true, 201)
-          })
-        }
-      );
-    } else {
-      Role.findOne({ role: 'Ученик' }, (err, role) => {
-        if (err) {
-          return jsonResponse(res, null, err, false, 500)
-        }
-
-        user.roles = [role._id]
-        user.save(err => {
-          if (err) {
-            return jsonResponse(res, null, err, false, 500)
-          }
-          return jsonResponse(res, user, null, true, 201)
-        });
-      });
-    }
-  });
+  user.save()
+  return jsonResponse(res, user, true, 201)
 };
 
-exports.signin = async (req, res) => {
+exports.signIn = async (req, res) => {
   let user = await Student.aggregate([
     {
       $match: {
@@ -114,6 +77,9 @@ exports.signin = async (req, res) => {
     return jsonResponse(res, null, err)
   })
   user = user[0]
+  if (!user.added) {
+    return jsonResponse(res, null, 'Пользователь ещё не активирован. Дождитесь активации администратором', false, 401)
+  }
   if (!user) {
     return jsonResponse(res, null, 'Не правильный логин или пароль', false, 401)
   }

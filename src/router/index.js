@@ -42,7 +42,12 @@ const routes = [
   {
     path: '/student/:id',
     name: 'Student page',
-    component: () => import(/* webpackChunkName: "Student page" */ '../views/StudentProfile')
+    component: () => import(/* webpackChunkName: "Student page" */ '../views/students/StudentProfile')
+  },
+  {
+    path: '/admin',
+    name: 'Admin page',
+    component: () => import(/* webpackChunkName: "Admin page" */ '../views/Admin')
   },
 ]
 

@@ -10,16 +10,8 @@ module.exports = function(app) {
     next()
   })
 
-  app.post(
-    "/api/auth/signup",
-    [
-      verifySignUp.checkDuplicateUsernameOrEmail,
-      verifySignUp.checkRolesExisted
-    ],
-    controller.signup
-  )
-
-  app.post("/api/auth/signin", controller.signin)
+  app.post("/api/auth/signup", [verifySignUp.checkDuplicateEmail], controller.signUp)
+  app.post("/api/auth/signin", controller.signIn)
   app.get("/api/me", [authJwt.verifyToken],controller.aboutMe)
   app.get('/api/roles', [authJwt.verifyToken], controller.getRoles)
 }

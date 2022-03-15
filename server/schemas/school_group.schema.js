@@ -4,15 +4,15 @@ const schoolGroupSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-  school: {
-    type: mongoose.Types.ObjectId,
-  },
   students: [
     {
       type: mongoose.Types.ObjectId,
     }
   ],
-  endedAt: {
+  start: {
+    type: Date,
+  },
+  end: {
     type: Date,
   }
 }, {

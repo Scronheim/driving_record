@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken")
 const config = require("../config/auth.config.js")
 const db = require("../schemas")
 const {jsonResponse} = require("../utils")
-const User = db.user
+const Student = db.student
+const Instructor = db.instructor
 const Role = db.role
 
 verifyToken = (req, res, next) => {
@@ -22,20 +23,20 @@ verifyToken = (req, res, next) => {
 }
 
 isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+  Student.findById(req.userId).exec((err, user) => {
     if (err) {
       jsonResponse(res, null, err, false, 500)
     }
     Role.find(
       {
-        _id: { $in: user.roles }
+        _id: user.role
       },
       (err, roles) => {
         if (err) {
           return jsonResponse(res, null, err, false, 500)
         }
         const role = roles.find((r) => {
-          return r.name === 'Администратор'
+          return r.role === 'Администратор'
         })
         if (role) {
           next()
@@ -48,21 +49,21 @@ isAdmin = (req, res, next) => {
   })
 }
 
-isTeacher = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+isInstructor = (req, res, next) => {
+  Instructor.findById(req.userId).exec((err, user) => {
     if (err) {
       jsonResponse(res, null, err, false, 500)
     }
     Role.find(
       {
-        _id: { $in: user.roles }
+        _id: user.role
       },
       (err, roles) => {
         if (err) {
           return jsonResponse(res, null, err, false, 500)
         }
         const role = roles.find((r) => {
-          return r.name === 'Преподователь'
+          return r.role === 'Инструктор'
         })
         if (role) {
           next()
@@ -76,13 +77,13 @@ isTeacher = (req, res, next) => {
 }
 
 isStudent = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
+  Student.findById(req.userId).exec((err, user) => {
     if (err) {
       jsonResponse(res, null, err, false, 500)
     }
     Role.find(
       {
-        _id: { $in: user.roles }
+        _id: user.role
       },
       (err, roles) => {
         if (err) {
@@ -90,7 +91,7 @@ isStudent = (req, res, next) => {
         }
 
         const role = roles.find((r) => {
-          return r.name === 'Ученик'
+          return r.role === 'Ученик'
         })
         if (role) {
           next()
@@ -106,7 +107,7 @@ isStudent = (req, res, next) => {
 const authJwt = {
   verifyToken,
   isAdmin,
-  isTeacher,
+  isInstructor,
   isStudent,
 }
 module.exports = authJwt

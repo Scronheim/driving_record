@@ -66,15 +66,15 @@ const userModule = {
   },
   actions: {
     async getPaymentTypes({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/payment_types`)
+      const {data} = await axios.get(`${rootState.apiUrl}/payment_types`)
       commit('setPaymentTypes', data.data)
     },
     async getEventTypes({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/event_types`)
+      const {data} = await axios.get(`${rootState.apiUrl}/event_types`)
       commit('setEventTypes', data.data)
     },
     async getUserEvents({commit, rootState}, userId) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/events?id=${userId}`)
+      const {data} = await axios.get(`${rootState.apiUrl}/events?id=${userId}`)
       data.data.forEach((e) => {
         e.start = dayjs(e.start).format('YYYY-MM-DD HH:mm')
         e.end = dayjs(e.end).format('YYYY-MM-DD HH:mm')
@@ -86,34 +86,29 @@ const userModule = {
       commit('setUserEvents', data.data)
     },
     async verifyRecaptchaToken({rootState}, token) {
-      return await axios.post(`${rootState.apiUrl}/api/recaptcha`, {token})
+      return await axios.post(`${rootState.apiUrl}/recaptcha`, {token})
     },
     async getRoles({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/roles`)
+      const {data} = await axios.get(`${rootState.apiUrl}/roles`)
       commit('setRoles', data.data)
     },
     async getStudents({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/students`)
+      const {data} = await axios.get(`${rootState.apiUrl}/students`)
       commit('setStudents', data.data)
     },
-    async searchCity({rootState}, payload) {
-      return await axios.get(`${rootState.apiUrl}/api/cities?search=${payload}`)
-    },
-    async insertUser({rootState}, payload) {
-      return await axios.post(`${rootState.apiUrl}/api/user`, payload)
-    },
-    async updateUser({rootState}, payload) {
-      return await axios.patch(`${rootState.apiUrl}/api/user`, payload)
+    async updateStudent({rootState, dispatch}, payload) {
+      await axios.patch(`${rootState.apiUrl}/students`, payload)
+      dispatch('getStudents')
     },
     async aboutMe({commit, rootState}) {
       const token = localStorage.getItem('token')
       axios.defaults.headers.common['x-access-token'] = token
-      const {data} = await axios.get(`${rootState.apiUrl}/api/me`, {headers: {'x-access-token': token}})
+      const {data} = await axios.get(`${rootState.apiUrl}/me`, {headers: {'x-access-token': token}})
       commit('setUser', data.data)
     },
     async login({commit, dispatch, rootState}, payload) {
       try {
-        const {data} = await axios.post(`${rootState.apiUrl}/api/auth/signin`, payload)
+        const {data} = await axios.post(`${rootState.apiUrl}/auth/signin`, payload)
         commit('setUser', data.data.user)
         localStorage.setItem('token', data.data.token)
         axios.defaults.headers.common['x-access-token'] = data.data.token
@@ -127,7 +122,7 @@ const userModule = {
       }
     },
     register({rootState}, payload) {
-      return axios.post(`${rootState.apiUrl}/api/auth/signup`, payload)
+      return axios.post(`${rootState.apiUrl}/auth/signup`, payload)
     },
     logout({commit}) {
       localStorage.removeItem('token')

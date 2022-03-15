@@ -11,7 +11,7 @@ const instructorSchema = new mongoose.Schema({
     type: String,
   },
   car: {
-    type: mongoose.Types.ObjectId,
+    type: Object,
   },
   school: {
     type: mongoose.Types.ObjectId,

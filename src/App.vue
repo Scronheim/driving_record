@@ -53,6 +53,7 @@ export default {
       this.$store.dispatch('aboutMe')
       this.$store.dispatch('getStudents')
       this.$store.dispatch('getInstructors')
+      this.$store.dispatch('getSchoolGroups')
       this.$store.dispatch('getPaymentTypes')
       this.$store.dispatch('getEventTypes')
       this.$store.dispatch('getRoles')

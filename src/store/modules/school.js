@@ -15,12 +15,20 @@ const schoolModule = {
   },
   actions: {
     async getSchools({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/schools`)
+      const {data} = await axios.get(`${rootState.apiUrl}/schools`)
       commit('setSchools', data.data)
     },
-    async getGroupsBySchoolId({commit, rootState}, id) {
-      const {data} = await axios.get(`${rootState.apiUrl}/api/schools/${id}`)
+    async getSchoolGroups({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/school_groups`)
       commit('setSchoolGroups', data.data)
+    },
+    async addNewSchool({rootState, dispatch}, payload) {
+      await axios.post(`${rootState.apiUrl}/schools`, payload)
+      dispatch('getSchools')
+    },
+    async updateSchool({rootState, dispatch}, payload) {
+      await axios.patch(`${rootState.apiUrl}/schools`, payload)
+      dispatch('getSchools')
     },
   },
   getters: {

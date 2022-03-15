@@ -1,4 +1,5 @@
 const axios = require('axios')
+const bcrypt = require("bcryptjs")
 const mongoose = require('mongoose')
 const {jsonResponse} = require('../utils')
 const db = require('../schemas')
@@ -15,13 +16,22 @@ exports.updateInstructor = (req, res) => {
   })
 }
 
-exports.getUsers = async (req, res) => {
+exports.getInstructors = async (req, res) => {
   const users = await getUsers()
   return jsonResponse(res, users)
 }
 
 exports.insertInstructor = async (req, res) => {
-  const user = new Instructor(req.body)
+  const user = new Instructor({
+    name: req.body.name,
+    phone: req.body.phone,
+    email: req.body.email,
+    school: req.body.school,
+    disabled: req.body.disabled,
+    role: ObjectId(req.body.role),
+    car: req.body.car,
+    password: bcrypt.hashSync(req.body.password, 8)
+  })
   await user.save()
   return jsonResponse(res, user)
 }
@@ -54,14 +64,6 @@ async function getUserById(id) {
     },
     {
       $lookup: {
-        from: 'cars',
-        localField: 'car',
-        foreignField: '_id',
-        as: 'car'
-      }
-    },
-    {
-      $lookup: {
         from: 'schools',
         localField: 'school',
         foreignField: '_id',
@@ -75,11 +77,6 @@ async function getUserById(id) {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$car',
         preserveNullAndEmptyArrays: true,
       }
     },
@@ -98,14 +95,6 @@ async function getUsers() {
     },
     {
       $lookup: {
-        from: 'cars',
-        localField: 'car',
-        foreignField: '_id',
-        as: 'car'
-      }
-    },
-    {
-      $lookup: {
         from: 'schools',
         localField: 'school',
         foreignField: '_id',
@@ -119,11 +108,6 @@ async function getUsers() {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$car',
         preserveNullAndEmptyArrays: true,
       }
     },

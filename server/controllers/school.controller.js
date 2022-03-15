@@ -17,18 +17,26 @@ exports.getSchools = async (req, res) => {
   return jsonResponse(res, result)
 }
 
+exports.insertSchool = async (req, res) => {
+  const school = new School({
+    address: req.body.address
+  })
+  await school.save()
+  return jsonResponse(res, school)
+}
+
+exports.updateSchool = async (req, res) => {
+  const school = await School.findByIdAndUpdate(req.body._id, req.body, {new: true})
+  return jsonResponse(res, school)
+}
+
 exports.getSchoolGroups = async (req, res) => {
-  const groups = await getSchoolGroupById(req.params.id)
+  const groups = await getSchoolGroups()
   return jsonResponse(res, groups)
 }
 
-async function getSchoolGroupById(id) {
+async function getSchoolGroups() {
   return SchoolGroup.aggregate([
-    {
-      $match: {
-        school: ObjectId(id)
-      }
-    },
     {
       $lookup: {
         from: 'students',
@@ -37,14 +45,5 @@ async function getSchoolGroupById(id) {
         as: 'students'
       }
     },
-    {
-      $lookup: {
-        from: 'schools',
-        localField: 'school',
-        foreignField: '_id',
-        as: 'school'
-      }
-    },
-    {$unwind: '$school'}
   ]).project({students: {password: 0}}) //exclude password field
 }

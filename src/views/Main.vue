@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <v-stepper
+        v-if="$store.getters.isLogin"
         v-model="currentStep"
         vertical
     >
@@ -94,6 +95,9 @@
         </v-calendar>
       </v-stepper-content>
     </v-stepper>
+    <v-card v-else>
+      <v-card-title>Добро пожаловать в личный кабинет школы «Авто Зачёт»</v-card-title>
+    </v-card>
   </v-container>
 </template>
 
@@ -147,7 +151,6 @@ export default {
     },
     startTime (tms) {
       const mouse = this.toTime(tms)
-      console.log(this.roundTime(mouse))
       const eventIndex = this.events.findIndex((e) => {
         return e.start === this.roundTime(mouse)
       })

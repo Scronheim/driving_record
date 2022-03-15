@@ -100,6 +100,7 @@ export default {
       disabled: false,
       phone: null,
       password: null,
+      added: false,
     },
     confirmPassword: null,
   }),

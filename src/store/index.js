@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    apiUrl: 'http://89.223.127.100:3000',
+    apiUrl: 'http://89.223.127.100:3000/api',
   },
   mutations: {},
   actions: {},

@@ -10,7 +10,7 @@ module.exports = function(app) {
     next()
   })
   app.post('/api/recaptcha', controller.verifyRecaptchaToken)
-  app.get('/api/instructors', controller.getUsers)
+  app.get('/api/instructors', controller.getInstructors)
   app.post('/api/instructor', [authJwt.verifyToken, authJwt.isAdmin], controller.insertInstructor)
   app.patch('/api/instructor', [authJwt.verifyToken], controller.updateInstructor)
 }
