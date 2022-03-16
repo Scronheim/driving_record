@@ -35,14 +35,22 @@
 <script>
 export default {
   name: "SchoolProfile",
-  mounted() {
-    this.$store.dispatch('getGroupsBySchoolId', this.$route.params.id)
+  watch: {
+    '$store.getters.schools': function () {
+      const school = this.$store.getters.schools.find((s) => {
+        return s._id === this.$route.params.id
+      })
+      this.groups = school.groups
+    }
   },
   computed: {
     chunkedGroups() {
-      return this.$_.chunk(this.$store.getters.schoolGroups, 3)
+      return this.$_.chunk(this.groups, 3)
     }
   },
+  data: () => ({
+    groups: [],
+  })
 }
 </script>
 

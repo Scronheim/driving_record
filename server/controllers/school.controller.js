@@ -3,18 +3,13 @@ const {jsonResponse} = require('../utils')
 const db = require('../schemas')
 const School = db.school
 const SchoolGroup = db.schoolGroup
-const Student = db.student
 
 const ObjectId = mongoose.Types.ObjectId
 
 exports.getSchools = async (req, res) => {
-  let result
-  if (req.query.id) {
-    result = await Student.find({school: req.query.id})
-  } else {
-    result = await School.find({})
-  }
-  return jsonResponse(res, result)
+  // const schools = await School.find({})
+  const schools = await getSchools()
+  return jsonResponse(res, schools)
 }
 
 exports.insertSchool = async (req, res) => {
@@ -35,15 +30,15 @@ exports.getSchoolGroups = async (req, res) => {
   return jsonResponse(res, groups)
 }
 
-async function getSchoolGroups() {
-  return SchoolGroup.aggregate([
+async function getSchools() {
+  return School.aggregate([
     {
       $lookup: {
-        from: 'students',
-        localField: 'students',
+        from: 'users',
+        localField: 'groups.students',
         foreignField: '_id',
-        as: 'students'
+        as: 'groups.students'
       }
     },
-  ]).project({students: {password: 0}}) //exclude password field
+  ])
 }

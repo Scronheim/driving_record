@@ -11,13 +11,19 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
   },
   start: {
-    type: Date,
+    type: Number, // timestamp
   },
   end: {
-    type: Date,
+    type: Number, // timestamp
   },
   timed: {
     type: Boolean,
+  },
+  cost: {
+    type: Number,
+  },
+  status: {
+    type: mongoose.Types.ObjectId
   },
 }, {
   versionKey: false,

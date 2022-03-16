@@ -70,6 +70,9 @@
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-btn text color="success"
+               :disabled="newEvents.length === 0"
+               @click="addNewEvent">Записаться</v-btn>
         <v-calendar
             ref="calendar"
             v-model="focus"
@@ -102,6 +105,8 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 export default {
   name: 'Main',
   computed: {
@@ -109,16 +114,29 @@ export default {
       return this.$_.chunk(this.$store.getters.instructors, 3)
     },
     events() {
-      return this.$store.getters.userEvents
-    }
+      const events = this.$store.getters.events.filter((e) => {
+        return e.instructor._id === this.record.instructor._id
+      })
+      events.forEach((e) => {
+        e.name = e.type.name
+        e.color = e.type.color
+      })
+      return events
+    },
   },
   data: () => ({
     currentStep: 1,
     record: {
       instructor: {},
-      student: null,
-      date: null,
+      student: {},
+      start: null,
+      end: null,
+      timed: true,
+      type: null,
+      status: null,
+      name: null,
     },
+    newEvents: [],
     typeToLabel: {
       month: 'Месяц',
       week: 'Неделя',
@@ -134,7 +152,6 @@ export default {
     modes: ['stack', 'column'],
     weekday: [1, 2, 3, 4, 5, 6, 0],
     focus: '',
-    names: ['Нет записи', 'Свободно', 'Занято', 'Неявка', 'Экзамен', 'Внутренний экзамен'],
     dragEvent: null,
     dragStart: null,
     createEvent: null,
@@ -142,90 +159,48 @@ export default {
     extendOriginal: null,
   }),
   methods: {
-    startDrag ({ event, timed }) {
-      if (event && timed) {
-        this.dragEvent = event
-        this.dragTime = null
-        this.extendOriginal = null
-      }
+    async addNewEvent() {
+      await this.$store.dispatch('addNewEvents', this.newEvents)
+      this.newEvents.forEach((e) => {
+        const date = dayjs(e.start).format('DD.MM.YYYY')
+        const timeStart = dayjs(e.start).format('HH:mm')
+        const timeEnd = dayjs(e.end).format('HH:mm')
+        this.$toast.success(`Вы записались на ${date}, с ${timeStart} до ${timeEnd}`)
+      })
+      this.newEvents = []
     },
     startTime (tms) {
       const mouse = this.toTime(tms)
-      const eventIndex = this.events.findIndex((e) => {
-        return e.start === this.roundTime(mouse)
+      // const eventIndex = this.events.findIndex((e) => {
+      //   return e.start === this.roundTime(mouse)
+      // })
+      this.createStart = this.roundTime(mouse)
+      this.createEvent = {
+        type: '6221d6203962a189d7ade049',
+        name: 'Занято',
+        color: 'error',
+        start: this.createStart,
+        end: parseInt(this.$dayjs(this.createStart).add(1.5, 'h').format('x')),
+        instructor: this.record.instructor,
+        student: this.record.student,
+        cost: this.$store.getters.user.drivingCost,
+        timed: true,
+      }
+
+      this.newEvents.push({
+        type: '6221d6203962a189d7ade049',
+        name: 'Занято',
+        color: 'error',
+        start: this.createStart,
+        end: parseInt(this.$dayjs(this.createStart).add(1.5, 'h').format('x')),
+        instructor: this.record.instructor._id,
+        student: this.record.student._id,
+        cost: this.$store.getters.user.drivingCost,
+        timed: true,
+        status: '623190b8926bff909550602c'
       })
-      if (eventIndex > -1) {
-        console.log(eventIndex)
-        this.$store.commit('removeEvent', eventIndex)
-      }
 
-      if (this.dragEvent && this.dragTime === null) {
-        const start = this.dragEvent.start
-
-        this.dragTime = mouse - start
-      } else {
-        this.createStart = this.roundTime(mouse)
-        this.createEvent = {
-          name: `Занято`,
-          color: 'error',
-          start: this.createStart,
-          end: this.$dayjs(this.createStart).add(1, 'h').add(30, 'm').format('YYYY-MM-DD HH:mm'),
-          timed: true,
-        }
-
-        this.events.push(this.createEvent)
-      }
-    },
-    extendBottom (event) {
-      this.createEvent = event
-      this.createStart = event.start
-      this.extendOriginal = event.end
-    },
-    mouseMove (tms) {
-      const mouse = this.toTime(tms)
-
-      if (this.dragEvent && this.dragTime !== null) {
-        const start = this.dragEvent.start
-        const end = this.dragEvent.end
-        const duration = end - start
-        const newStartTime = mouse - this.dragTime
-        const newStart = this.roundTime(newStartTime)
-        const newEnd = newStart + duration
-
-        this.dragEvent.start = newStart
-        this.dragEvent.end = newEnd
-      } else if (this.createEvent && this.createStart !== null) {
-        const mouseRounded = this.roundTime(mouse, false)
-        const min = Math.min(mouseRounded, this.createStart)
-        const max = Math.max(mouseRounded, this.createStart)
-
-        this.createEvent.start = min
-        this.createEvent.end = max
-      }
-    },
-    endDrag () {
-      this.dragTime = null
-      this.dragEvent = null
-      this.createEvent = null
-      this.createStart = null
-      this.extendOriginal = null
-    },
-    cancelDrag () {
-      if (this.createEvent) {
-        if (this.extendOriginal) {
-          this.createEvent.end = this.extendOriginal
-        } else {
-          const i = this.events.indexOf(this.createEvent)
-          if (i !== -1) {
-            this.events.splice(i, 1)
-          }
-        }
-      }
-
-      this.createEvent = null
-      this.createStart = null
-      this.dragTime = null
-      this.dragEvent = null
+      this.$store.commit('addEvent', this.createEvent)
     },
     roundTime (time, down = true) {
       const roundTo = 90 // minutes
@@ -244,7 +219,7 @@ export default {
     },
     selectInstructor(instructor) {
       this.record.instructor = instructor
-      this.$store.dispatch('getUserEvents', instructor._id)
+      this.record.student = this.$store.getters.user
       this.currentStep = 2
     },
     intervalFormatter(locale) {

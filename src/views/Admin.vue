@@ -108,6 +108,14 @@
             class="ma-1"
             v-model="newInstructor.car.transmission"
             :items="['Ручная', 'Автомат']" />
+        <v-file-input
+            dense
+            solo-inverted
+            hide-details
+            label="Фото автомобиля"
+            accept="image/*"
+            class="ma-1"
+            v-model="newInstructor.car.photo" />
         <v-subheader class="px-0">Выберите класс</v-subheader>
         <v-select
             dense
@@ -228,6 +236,12 @@ export default {
       this.carInfoDialog = true
     },
     async addNewInstructor() {
+      if (this.newInstructor.car.photo) {
+        const formData = new FormData()
+        formData.append('photo', this.newInstructor.car.photo)
+        const {data} = await this.$store.dispatch('uploadPhoto', formData)
+        this.newInstructor.car.photo = data.data.photo
+      }
       await this.$store.dispatch('addNewInstructor', this.newInstructor)
       this.$toast.success(`Инструктор добавлен`)
     },

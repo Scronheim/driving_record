@@ -9,6 +9,8 @@ module.exports = function(app) {
     )
     next()
   })
-  app.get('/api/events', controller.getUserEvents)
+  app.get('/api/events', controller.getEvents)
+  app.post('/api/events', controller.addEvent)
   app.get('/api/event_types', controller.getEventTypes)
+  app.get('/api/event_statuses', controller.getEventStatuses)
 }

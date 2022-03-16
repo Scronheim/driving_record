@@ -13,5 +13,6 @@ module.exports = function(app) {
   app.post("/api/auth/signup", [verifySignUp.checkDuplicateEmail], controller.signUp)
   app.post("/api/auth/signin", controller.signIn)
   app.get("/api/me", [authJwt.verifyToken],controller.aboutMe)
+  app.patch("/api/change_password", [authJwt.verifyToken],controller.changePassword)
   app.get('/api/roles', [authJwt.verifyToken], controller.getRoles)
 }

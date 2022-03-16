@@ -3,13 +3,17 @@ const {jsonResponse} = require('../utils')
 
 const config = require("../config/auth.config")
 const db = require("../schemas")
-const Student = db.student
-const Instructor = db.instructor
+const User = db.user
 const Role = db.role
 
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 const ObjectId = mongoose.Types.ObjectId
+
+exports.changePassword = async (req, res) => {
+  await User.findByIdAndUpdate(req.userId, {password: bcrypt.hashSync(req.body.password, 8)}, {new: false})
+  return jsonResponse(res, null)
+}
 
 exports.aboutMe = async (req, res) => {
   const user = await getStudentById(req.userId)
@@ -26,7 +30,7 @@ exports.getRoles = async (req, res) => {
 }
 
 exports.signUp = (req, res) => {
-  const user = new Student({
+  const user = new User({
     name: req.body.name,
     phone: req.body.phone,
     email: req.body.email,
@@ -41,7 +45,7 @@ exports.signUp = (req, res) => {
 };
 
 exports.signIn = async (req, res) => {
-  let user = await Student.aggregate([
+  let user = await User.aggregate([
     {
       $match: {
         email: {$regex: req.body.email, $options: 'i'}
@@ -109,7 +113,7 @@ exports.signIn = async (req, res) => {
 }
 
 async function getStudentById(id) {
-  return Student.aggregate([
+  return User.aggregate([
     {
       $match: {
         _id: ObjectId(id)
@@ -131,6 +135,14 @@ async function getStudentById(id) {
         as: 'school'
       }
     },
+    {
+      $lookup: {
+        from: 'school_groups',
+        localField: 'group',
+        foreignField: '_id',
+        as: 'group'
+      }
+    },
     {$unwind: {
         path: '$role',
         preserveNullAndEmptyArrays: true,
@@ -138,6 +150,11 @@ async function getStudentById(id) {
     },
     {$unwind: {
         path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$group',
         preserveNullAndEmptyArrays: true,
       }
     },

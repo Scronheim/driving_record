@@ -110,7 +110,30 @@
           </v-col>
         </v-row>
         <v-row v-if="$store.getters.isAdmin">
-          <v-col>123</v-col>
+          <v-col>
+            <v-data-table
+              dense
+              :headers="eventHeaders"
+              :items="studentEvents"
+              :item-class="rowClass"
+            >
+              <template v-slot:item.date="{item}">
+                {{ item.start | humanDate }}
+              </template>
+              <template v-slot:item.time="{item}">
+                {{ item.start | humanTime }} - {{ item.end | humanTime }}
+              </template>
+              <template v-slot:item.cost="{item}">
+                {{ item.cost }}р.
+              </template>
+              <template v-slot:item.status="{item}">
+                {{ item.status.name }}
+              </template>
+              <template v-slot:item.instructor="{item}">
+                {{ item.instructor.name }}
+              </template>
+            </v-data-table>
+          </v-col>
         </v-row>
       </v-card-text>
     </v-card>
@@ -141,7 +164,6 @@ export default {
   mounted() {
     this.$store.dispatch('getStudents')
     this.$store.dispatch('getPaymentTypes')
-    this.$store.dispatch('getUserEvents', this.$route.params.id)
   },
   computed: {
     student() {
@@ -154,6 +176,11 @@ export default {
         school: {},
         group: {},
       }
+    },
+    studentEvents() {
+      return this.$store.getters.events.filter((e) => {
+        return e.student._id === this.$route.params.id
+      })
     },
   },
   data: () => ({
@@ -174,10 +201,24 @@ export default {
     eventHeaders: [
       {text: 'Дата занятия', align: 'start', sortable: true, value: 'date'},
       {text: 'Время', align: 'start', sortable: false, value: 'time'},
+      {text: 'Сумма', align: 'start', sortable: false, value: 'cost'},
+      {text: 'Статус', align: 'start', sortable: true, value: 'status'},
       {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
     ],
   }),
   methods: {
+    rowClass(item) {
+      switch (item.status._id) {
+        case '623190b8926bff909550602c': // Запланировано
+          return 'primary'
+        case '623190ca926bff909550602d': // В процессе
+          return 'orange'
+        case '623190de926bff909550602e': // Завершено
+          return 'success'
+        case '623190e8926bff909550602f': // Неявка
+          return 'error'
+      }
+    },
     removePayment(payment) {
       if (confirm(`Вы действительно хотите удалить этот платёж?`)) {
         const paymentIndex = this.student.payments.findIndex((p) => {

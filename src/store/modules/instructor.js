@@ -18,6 +18,9 @@ const instructorModule = {
       await axios.post(`${rootState.apiUrl}/instructor`, payload)
       await dispatch('getInstructors')
     },
+    async uploadPhoto({rootState}, payload) {
+      return await axios.post(`${rootState.apiUrl}/upload_photo`, payload)
+    },
     async updateInstructor({rootState, dispatch}, payload) {
       await axios.patch(`${rootState.apiUrl}/instructor`, payload)
       await dispatch('getInstructors')

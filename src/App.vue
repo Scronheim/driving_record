@@ -51,11 +51,11 @@ export default {
     this.$store.commit('getToken')
     if (this.$store.getters.token) {
       this.$store.dispatch('aboutMe')
-      this.$store.dispatch('getStudents')
-      this.$store.dispatch('getInstructors')
-      this.$store.dispatch('getSchoolGroups')
-      this.$store.dispatch('getPaymentTypes')
+      this.$store.dispatch('getEvents')
       this.$store.dispatch('getEventTypes')
+      this.$store.dispatch('getEventStatuses')
+      this.$store.dispatch('getUsers')
+      this.$store.dispatch('getPaymentTypes')
       this.$store.dispatch('getRoles')
     }
   },

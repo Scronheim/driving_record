@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import axios from 'axios'
-import dayjs from 'dayjs'
 import router from '@/router/index'
 
 const userModule = {
@@ -14,27 +13,15 @@ const userModule = {
       city: {},
       role: {},
       school: {},
+      group: {},
     },
+    users: [],
     token: null,
-    students: [],
-    roles: [],
-    userEvents: [],
-    eventTypes: [],
     paymentTypes: [],
   }),
   mutations: {
-    removeEvent(state, index) {
-      state.userEvents.splice(index)
-      console.log(index, state.userEvents)
-    },
     setPaymentTypes(state, types) {
       state.paymentTypes = types
-    },
-    setEventTypes(state, types) {
-      state.eventTypes = types
-    },
-    setUserEvents(state, events) {
-      state.userEvents = events
     },
     getToken(state) {
       const token = localStorage.getItem('token')
@@ -48,8 +35,8 @@ const userModule = {
     setUser(state, payload) {
       state.user = payload
     },
-    setStudents(state, payload) {
-      state.students = payload
+    setUsers(state, payload) {
+      state.users = payload
     },
     clearUser(state) {
       state.user = {
@@ -69,22 +56,6 @@ const userModule = {
       const {data} = await axios.get(`${rootState.apiUrl}/payment_types`)
       commit('setPaymentTypes', data.data)
     },
-    async getEventTypes({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/event_types`)
-      commit('setEventTypes', data.data)
-    },
-    async getUserEvents({commit, rootState}, userId) {
-      const {data} = await axios.get(`${rootState.apiUrl}/events?id=${userId}`)
-      data.data.forEach((e) => {
-        e.start = dayjs(e.start).format('YYYY-MM-DD HH:mm')
-        e.end = dayjs(e.end).format('YYYY-MM-DD HH:mm')
-        e.name = e.type.name
-        e.color = e.type.color
-        // e.start = dayjs(e.start).format('YYYY-MM-DD hh:mm:ss')
-        // e.end = dayjs(e.end).format('YYYY-MM-DD hh:mm:ss')
-      })
-      commit('setUserEvents', data.data)
-    },
     async verifyRecaptchaToken({rootState}, token) {
       return await axios.post(`${rootState.apiUrl}/recaptcha`, {token})
     },
@@ -92,13 +63,16 @@ const userModule = {
       const {data} = await axios.get(`${rootState.apiUrl}/roles`)
       commit('setRoles', data.data)
     },
-    async getStudents({commit, rootState}) {
-      const {data} = await axios.get(`${rootState.apiUrl}/students`)
-      commit('setStudents', data.data)
+    async getUsers({commit, rootState}) {
+      const {data} = await axios.get(`${rootState.apiUrl}/users`)
+      commit('setUsers', data.data)
     },
-    async updateStudent({rootState, dispatch}, payload) {
-      await axios.patch(`${rootState.apiUrl}/students`, payload)
-      dispatch('getStudents')
+    async updateUser({rootState, dispatch}, payload) {
+      await axios.patch(`${rootState.apiUrl}/users`, payload)
+      dispatch('getUsers')
+    },
+    async changePassword({rootState}, payload) {
+      await axios.patch(`${rootState.apiUrl}/change_password`, payload)
     },
     async aboutMe({commit, rootState}) {
       const token = localStorage.getItem('token')
@@ -112,7 +86,7 @@ const userModule = {
         commit('setUser', data.data.user)
         localStorage.setItem('token', data.data.token)
         axios.defaults.headers.common['x-access-token'] = data.data.token
-        dispatch('getStudents')
+        dispatch('getUsers')
         dispatch('getEventTypes')
         dispatch('getRoles')
         router.push('/profile')
@@ -133,21 +107,29 @@ const userModule = {
   },
   getters: {
     token: state => state.token,
-    userEvents: state => state.userEvents,
-    eventTypes: state => state.eventTypes,
     paymentTypes: state => state.paymentTypes,
     user: state => state.user,
-    students: state => state.students,
+    users: state => state.users,
+    instructors: function (state) {
+      return state.users.filter((u) => {
+        return u.role.role === 'Инструктор'
+      })
+    },
+    students: function (state) {
+      return state.users.filter((u) => {
+        return u.role.role === 'Ученик'
+      })
+    },
     roles: state => state.roles,
     isLogin: state => !!state.user._id,
     isAdmin: function (state) {
       return state.user.role.role === 'Администратор'
     },
-    isModerator: function (state) {
-      const admin = state.user.roles.find((r) => {
-        return r.name === 'moderator'
-      })
-      return !!admin
+    isInstructor: function (state) {
+      return state.user.role.role === 'Инструктор'
+    },
+    isStudent: function (state) {
+      return state.user.role.role === 'Ученик'
     },
   }
 }

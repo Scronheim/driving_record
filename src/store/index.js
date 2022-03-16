@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import studentModule from '@/store/modules/student'
-import instructorModule from '@/store/modules/instructor'
 import schoolModule from '@/store/modules/school'
+import eventModule from '@/store/modules/event'
+import userModule from '@/store/modules/user'
 
 Vue.use(Vuex)
 
@@ -13,8 +13,8 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-    student: studentModule,
-    instructors: instructorModule,
     schools: schoolModule,
+    events: eventModule,
+    users: userModule,
   }
 })

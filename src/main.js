@@ -5,6 +5,7 @@ import store from './store'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 import _ from 'lodash'
 import vuetify from './plugins/vuetify'
 import Toast from 'vue-toastification'
@@ -16,6 +17,7 @@ Vue.prototype.$_ = _
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 
 dayjs.tz.setDefault('Asia/Yekaterinburg')
 
@@ -38,11 +40,15 @@ Vue.use(Toast, {
 })
 
 Vue.filter('humanDateTime', function(date) {
-  return dayjs(date).format('DD.MM.YYYY hh:mm:ss')
+  return dayjs(date).format('DD.MM.YYYY HH:mm:ss')
 })
 
 Vue.filter('humanDate', function(date) {
   return dayjs(date).format('DD.MM.YYYY')
+})
+
+Vue.filter('humanTime', function(date) {
+  return dayjs(date).format('HH:mm')
 })
 
 Vue.filter('paymentType', function(type) {

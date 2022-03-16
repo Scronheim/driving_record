@@ -1,5 +1,5 @@
 const { authJwt } = require('../middlewares')
-const controller = require('../controllers/student.controller')
+const controller = require('../controllers/user.controller')
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -9,8 +9,8 @@ module.exports = function(app) {
     )
     next()
   })
-  app.get('/api/students', controller.getStudents)
-  app.patch('/api/students', [authJwt.verifyToken], controller.updateStudent)
+  app.post('/api/upload_photo', controller.uploadPhoto)
+  app.get('/api/users', controller.getUsers)
+  app.patch('/api/users', [authJwt.verifyToken], controller.updateUser)
   app.get('/api/payment_types', [authJwt.verifyToken], controller.getPaymentTypes)
-  // app.post('/api/student', controller.insertStudent)
 }

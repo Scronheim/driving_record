@@ -205,9 +205,6 @@
 <script>
 export default {
   name: 'InstructorProfile',
-  mounted() {
-    this.$store.dispatch('getUserEvents', this.$route.params.id)
-  },
   computed: {
     instructor() {
       if (this.$store.getters.instructors.length > 0) {
@@ -218,13 +215,15 @@ export default {
       return {}
     },
     events() {
-      return this.$store.getters.userEvents
-    },
-    colors() {
-      return this.$store.getters.eventTypes.map((t) => {
-        return t.color
+      const events = this.$store.getters.events.filter((e) => {
+        return e.instructor._id === this.$route.params.id
       })
-    }
+      events.forEach((e) => {
+        e.name = e.type.name
+        e.color = e.type.color
+      })
+      return events
+    },
   },
   data: () => ({
     typeToLabel: {
@@ -239,10 +238,8 @@ export default {
       {text: 'Месяц', value: 'month'},
     ],
     mode: 'stack',
-    modes: ['stack', 'column'],
     weekday: [1, 2, 3, 4, 5, 6, 0],
     focus: '',
-    names: ['Нет записи', 'Свободно', 'Занято', 'Неявка', 'Экзамен', 'Внутренний экзамен'],
     eventDialog: false,
     addEventDialog: false,
     currentEvent: {

@@ -2,7 +2,7 @@ const axios = require('axios')
 const mongoose = require('mongoose')
 const {jsonResponse} = require('../utils')
 const db = require('../schemas')
-const Student = db.student
+const User = db.user
 const PaymentType = db.paymentType
 const Role = db.role
 
@@ -13,8 +13,14 @@ exports.getPaymentTypes = async (req, res) => {
   return jsonResponse(res, types)
 }
 
-exports.updateStudent = (req, res) => {
-  Student.findByIdAndUpdate(req.body._id, req.body, {new: true}).then(async () => {
+exports.uploadPhoto = async (req, res) => {
+  const photo = req.files.photo
+  photo.mv(`/srv/front/img/${photo.name}`)
+  return jsonResponse(res, {photo: `/img/${photo.name}`})
+}
+
+exports.updateUser = (req, res) => {
+  User.findByIdAndUpdate(req.body._id, req.body, {new: true}).then(async () => {
     const user = await getUserById(req.body._id)
     return jsonResponse(res, user[0])
   }).catch((err) => {
@@ -22,8 +28,8 @@ exports.updateStudent = (req, res) => {
   })
 }
 
-exports.getStudents = async (req, res) => {
-  const users = await getStudents()
+exports.getUsers = async (req, res) => {
+  const users = await getUsers()
   return jsonResponse(res, users)
 }
 
@@ -32,8 +38,8 @@ exports.getRoles = async (req, res) => {
   return jsonResponse(res, roles)
 }
 
-exports.insertStudent = async (req, res) => {
-  const user = new Student(req.body)
+exports.insertUser = async (req, res) => {
+  const user = new User(req.body)
   await user.save()
   return jsonResponse(res, user)
 }
@@ -50,7 +56,7 @@ exports.verifyRecaptchaToken = async (req, res) => {
 }
 
 async function getUserById(id) {
-  return Student.aggregate([
+  return User.aggregate([
     {
       $match: {
         _id: ObjectId(id)
@@ -85,8 +91,8 @@ async function getUserById(id) {
   ]).project({password: 0}) //exclude password field
 }
 
-async function getStudents() {
-  return Student.aggregate([
+async function getUsers() {
+  return User.aggregate([
     {
       $lookup: {
         from: 'roles',
@@ -127,41 +133,4 @@ async function getStudents() {
       }
     },
   ]).project({password: 0}) //exclude password field
-}
-
-async function getStudentEvents(userId) {
-  return Event.aggregate([
-    {
-      $match: {
-        student: ObjectId(userId)
-      }
-    },
-    {
-      $lookup: {
-        from: 'event_types',
-        localField: 'type',
-        foreignField: '_id',
-        as: 'type'
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'instructor',
-        foreignField: '_id',
-        as: 'instructor'
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'student',
-        foreignField: '_id',
-        as: 'student'
-      }
-    },
-    {$unwind: '$type'},
-    {$unwind: '$instructor'},
-    {$unwind: '$student'},
-  ])
 }

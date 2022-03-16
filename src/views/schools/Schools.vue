@@ -17,24 +17,20 @@
 <script>
 export default {
   name: 'Schools',
-  async mounted() {
-    await this.$store.dispatch('getStudents')
-    await this.$store.dispatch('getSchools')
-    this.$store.getters.schools.forEach((school) => {
-      const students = this.$store.getters.students.filter((user) => {
-        return user.school._id === school._id
-      })
-      school.studentsCount = students.length
-      this.schools.push(school)
-    })
-  },
   computed: {
     chunkedSchools() {
-      return this.$_.chunk(this.schools, 3)
+      const schools = this.$store.getters.schools
+      schools.forEach((school) => {
+        const students = this.$store.getters.students.filter((user) => {
+          return user.school._id === school._id
+        })
+        school.studentsCount = students.length
+      })
+      return this.$_.chunk(schools, 3)
     }
   },
   data: () => ({
-    schools: [],
+
   }),
 }
 </script>

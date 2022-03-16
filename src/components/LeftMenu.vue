@@ -7,12 +7,14 @@
         </v-list-item-icon>
         <v-list-item-title v-text="'Админка'"/>
       </v-list-item>
-      <v-list-item link v-for="(item, index) in menu" :key="`menuItem-${index}`" :to="item.to">
-        <v-list-item-icon>
-          <v-icon v-text="item.icon"/>
-        </v-list-item-icon>
-        <v-list-item-title v-text="item.text"/>
-      </v-list-item>
+      <template v-for="(item, index) in menu">
+        <v-list-item link v-if="checkPermission(item)" :key="`menuItem-${index}`" :to="item.to">
+          <v-list-item-icon>
+            <v-icon v-text="item.icon"/>
+          </v-list-item-icon>
+          <v-list-item-title v-text="item.text"/>
+        </v-list-item>
+      </template>
       <v-divider/>
       <v-list-item link @click="logout">
         <v-list-item-icon>
@@ -32,15 +34,18 @@ export default {
   components: {LoginForm},
   data: () => ({
     menu: [
-      {text: 'Онлайн запись', to: '/', icon: 'mdi-pen-plus'},
-      {text: 'Профиль', to: '/profile', icon: 'mdi-account'},
-      {text: 'Сообщения', to: '/messages', icon: 'mdi-message'},
-      {text: 'Классы', to: '/schools', icon: 'mdi-domain'},
-      {text: 'Инструктора', to: '/instructors', icon: 'mdi-human-male-board'},
+      {text: 'Онлайн запись', to: '/', icon: 'mdi-pen-plus', allowedRoles: ['Ученик', 'Администратор']},
+      {text: 'Профиль', to: '/profile', icon: 'mdi-account', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
+      {text: 'Сообщения', to: '/messages', icon: 'mdi-message', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
+      {text: 'Классы', to: '/schools', icon: 'mdi-domain', allowedRoles: ['Администратор']},
+      {text: 'Инструктора', to: '/instructors', icon: 'mdi-human-male-board', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
       // {text: 'Ученики', to: '/students', icon: 'mdi-school'},
     ],
   }),
   methods: {
+    checkPermission(item) {
+      return item.allowedRoles.includes(this.$store.getters.user.role.role)
+    },
     logout() {
       this.$store.dispatch('logout')
     }

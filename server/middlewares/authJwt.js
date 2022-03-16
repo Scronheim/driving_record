@@ -2,8 +2,7 @@ const jwt = require("jsonwebtoken")
 const config = require("../config/auth.config.js")
 const db = require("../schemas")
 const {jsonResponse} = require("../utils")
-const Student = db.student
-const Instructor = db.instructor
+const User = db.user
 const Role = db.role
 
 verifyToken = (req, res, next) => {
@@ -23,7 +22,7 @@ verifyToken = (req, res, next) => {
 }
 
 isAdmin = (req, res, next) => {
-  Student.findById(req.userId).exec((err, user) => {
+  User.findById(req.userId).exec((err, user) => {
     if (err) {
       jsonResponse(res, null, err, false, 500)
     }
@@ -77,7 +76,7 @@ isInstructor = (req, res, next) => {
 }
 
 isStudent = (req, res, next) => {
-  Student.findById(req.userId).exec((err, user) => {
+  User.findById(req.userId).exec((err, user) => {
     if (err) {
       jsonResponse(res, null, err, false, 500)
     }
