@@ -12,5 +12,5 @@ module.exports = function(app) {
   app.get('/api/schools', controller.getSchools)
   app.post('/api/schools', controller.insertSchool)
   app.patch('/api/schools', controller.updateSchool)
-  app.get('/api/school_groups', controller.getSchoolGroups)
+  app.get('/api/groups', controller.getGroups)
 }

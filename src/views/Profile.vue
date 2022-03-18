@@ -3,86 +3,98 @@
     <v-card>
       <v-card-title>{{ user.name }}</v-card-title>
       <v-card-text>
-        <v-list dense>
-          <v-list-item title="Email">
-            <v-tooltip top>
-              <template v-slot:activator="{on, attrs}">
-                <v-list-item-icon v-on="on" v-bind="attrs">
-                  <v-icon>mdi-at</v-icon>
-                </v-list-item-icon>
-              </template>
-              <span>Email</span>
-            </v-tooltip>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-btn text small>{{ user.email }}</v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item title="Адрес школы">
-            <v-tooltip top>
-              <template v-slot:activator="{on, attrs}">
-                <v-list-item-icon v-on="on" v-bind="attrs">
-                  <v-icon>mdi-domain</v-icon>
-                </v-list-item-icon>
-              </template>
-              <span>Адрес школы</span>
-            </v-tooltip>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-btn text small>{{ user.school.address }}</v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item title="Роль">
-            <v-tooltip top>
-              <template v-slot:activator="{on, attrs}">
-                <v-list-item-icon v-on="on" v-bind="attrs">
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
-              </template>
-              <span>Роль</span>
-            </v-tooltip>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-btn text small>{{ user.role.role }}</v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item title="Телефон">
-            <v-tooltip top>
-              <template v-slot:activator="{on, attrs}">
-                <v-list-item-icon v-on="on" v-bind="attrs">
-                  <v-icon>mdi-phone</v-icon>
-                </v-list-item-icon>
-              </template>
-              <span>Телефон</span>
-            </v-tooltip>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-btn text small>{{ user.phone }}</v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item title="Дата регистрации">
-            <v-tooltip top>
-              <template v-slot:activator="{on, attrs}">
-                <v-list-item-icon v-on="on" v-bind="attrs">
-                  <v-icon>mdi-clock</v-icon>
-                </v-list-item-icon>
-              </template>
-              <span>Дата регистрации</span>
-            </v-tooltip>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-btn text small>{{ user.createdAt | humanDate }}</v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <v-btn text color="primary" @click="changePasswordDialog = true"
-          >Сменить пароль
-        </v-btn>
+        <v-row>
+          <v-col :cols="$vuetify.breakpoint.mobile ? '' : 3">
+            <v-list dense>
+              <v-list-item title="Email">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-at</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Email</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.email }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item title="Адрес школы" v-if="!$store.getters.isAdmin">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-domain</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Адрес школы</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.school.address }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item title="Роль">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Роль</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.role.role }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item title="Телефон">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-phone</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Телефон</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.phone }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item title="Дата регистрации">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-clock</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Дата регистрации</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.createdAt | humanDate }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <v-btn text color="primary" @click="changePasswordDialog = true">
+              Сменить пароль
+            </v-btn>
+          </v-col>
+          <template v-if="$store.getters.isStudent">
+            <v-col>
+              <StudentEvents :student-events="$store.getters.userEvents"/>
+            </v-col>
+            <v-col>
+              <StudentPayments :student-payments="$store.getters.userPayments"/>
+            </v-col>
+          </template>
+        </v-row>
       </v-card-text>
     </v-card>
 
@@ -90,28 +102,27 @@
       <template v-slot:body>
         <v-form ref="passwordForm">
           <v-text-field
-            dense
-            solo-inverted
-            :type="showPassword ? 'text': 'password'"
-            autocomplete="new-password"
-            :rules="[rules.required, rules.min]"
-            label="Новый пароль"
-            v-model="newPassword.password" />
+              dense
+              solo-inverted
+              :type="showPassword ? 'text' : 'password'"
+              autocomplete="new-password"
+              :rules="[rules.required, rules.min]"
+              label="Новый пароль"
+              v-model="newPassword.password" />
           <v-text-field
-            dense
-            solo-inverted
-            :type="showPassword ? 'text': 'password'"
-            :append-icon="showPassword ? 'mdi-eye-off': 'mdi-eye'"
-            autocomplete="new-password"
-            :rules="[rules.required, rules.min, passwordConfirmationRule]"
-            label="Новый пароль ещё раз"
-            @click:append="showPassword = !showPassword"
-            v-model="newPassword.passwordConfirm" />
+              dense
+              solo-inverted
+              :type="showPassword ? 'text' : 'password'"
+              :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              autocomplete="new-password"
+              :rules="[rules.required, rules.min, passwordConfirmationRule]"
+              label="Новый пароль ещё раз"
+              @click:append="showPassword = !showPassword"
+              v-model="newPassword.passwordConfirm" />
         </v-form>
       </template>
       <template v-slot:actions>
-        <v-btn text color="success"
-               @click="changePassword">Сменить</v-btn>
+        <v-btn text color="success" @click="changePassword">Сменить </v-btn>
       </template>
     </Dialog>
   </v-container>
@@ -119,18 +130,20 @@
 
 <script>
 import Dialog from '@/components/Dialog'
+import StudentEvents from '@/components/student/StudentEvents'
+import StudentPayments from '@/components/student/StudentPayments'
 
 export default {
   name: 'Profile',
-  components: {Dialog},
+  components: {StudentPayments, Dialog, StudentEvents},
   computed: {
     user() {
       return this.$store.getters.user
     },
     passwordConfirmationRule() {
       return (
-        this.newPassword.password === this.newPassword.passwordConfirm ||
-        'Пароли должны совпадать'
+          this.newPassword.password === this.newPassword.passwordConfirm ||
+          'Пароли должны совпадать'
       )
     },
   },
@@ -141,6 +154,13 @@ export default {
       password: '',
       passwordConfirm: '',
     },
+    eventHeaders: [
+      {text: 'Дата занятия', align: 'start', sortable: true, value: 'date'},
+      {text: 'Время', align: 'start', sortable: false, value: 'time'},
+      {text: 'Сумма', align: 'start', sortable: false, value: 'cost'},
+      {text: 'Статус', align: 'start', sortable: true, value: 'status'},
+      {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
+    ],
     rules: {
       required: (value) => !!value || 'Обязательное поле',
       min: (v) => v.length >= 8 || 'Минимум 8 символов',

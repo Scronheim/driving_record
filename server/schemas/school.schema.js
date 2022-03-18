@@ -4,9 +4,11 @@ const schoolSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  groups: {
-    type: Array,
-  },
+  groups: [
+    {
+      type: mongoose.Types.ObjectId
+    }
+  ],
 }, {
   versionKey: false,
   timestamps: true,

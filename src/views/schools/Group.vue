@@ -16,13 +16,13 @@
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-currency-rub'"/>
                 </v-list-item-icon>
-                <v-list-item-title>{{ getPaymentsSum(student) }}</v-list-item-title>
+                <v-list-item-title>{{ getPaymentsSum(student) }}р.</v-list-item-title>
               </v-list-item>
               <v-list-item>
                 <v-list-item-icon>
                   <v-icon v-text="'mdi-car'"/>
                 </v-list-item-icon>
-                <v-list-item-title>{{ student.payments.length }}</v-list-item-title>
+                <v-list-item-title>{{ student.payments.length }} раз</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -35,13 +35,10 @@
 <script>
 export default {
   name: "Group",
-  mounted() {
-    this.$store.dispatch('getGroupsBySchoolId', this.$route.params.id)
-  },
   computed: {
     chunkedStudents() {
-      if (this.$store.getters.schoolGroups.length > 0) {
-        const group = this.$store.getters.schoolGroups.find((g) => {
+      if (this.$store.getters.groups.length > 0) {
+        const group = this.$store.getters.groups.find((g) => {
           return g.school._id === this.$route.params.id
         })
         return this.$_.chunk(group.students, 5)
@@ -51,11 +48,14 @@ export default {
   },
   methods: {
     getPaymentsSum(student) {
-      return student.payments.map((p) => {
-        return p.sum
-      }).reduce((prev, next) => {
-        return prev + next
-      })
+      if (student.payments.length > 0) {
+        return student.payments.map((p) => {
+          return p.sum
+        }).reduce((prev, next) => {
+          return prev + next
+        })
+      }
+      return 0
     }
   }
 }

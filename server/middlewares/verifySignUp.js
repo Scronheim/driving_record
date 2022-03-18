@@ -1,9 +1,9 @@
 const db = require("../schemas")
-const Student = db.student
+const User = db.user
 
 checkDuplicateEmail = (req, res, next) => {
   // Email
-  Student.findOne({
+  User.findOne({
     email: req.body.email
   }).exec((err, user) => {
     if (err) {

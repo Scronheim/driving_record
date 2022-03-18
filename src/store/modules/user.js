@@ -6,14 +6,17 @@ const userModule = {
   state: () => ({
     user: {
       _id: null,
-      username: null,
+      name: null,
       email: null,
-      avatar: null,
-      cityId: null,
-      city: {},
       role: {},
       school: {},
       group: {},
+      phone: null,
+      disabled: false,
+      added: false,
+      car: null,
+      drivingCost: null,
+      payments: [],
     },
     users: [],
     token: null,
@@ -41,13 +44,17 @@ const userModule = {
     clearUser(state) {
       state.user = {
         _id: null,
-        username: null,
+        name: null,
         email: null,
-        avatar: null,
-        cityId: null,
-        city: {},
-        roles: [],
+        role: {},
         school: {},
+        group: {},
+        phone: null,
+        disabled: false,
+        added: false,
+        car: null,
+        drivingCost: null,
+        payments: [],
       }
     }
   },
@@ -86,10 +93,19 @@ const userModule = {
         commit('setUser', data.data.user)
         localStorage.setItem('token', data.data.token)
         axios.defaults.headers.common['x-access-token'] = data.data.token
-        dispatch('getUsers')
-        dispatch('getEventTypes')
-        dispatch('getRoles')
-        router.push('/profile')
+        await dispatch('getAllData')
+        switch (data.data.user.role.role) {
+          case 'Ученик':
+            await router.push('/')
+            break
+          case 'Администратор':
+            await router.push('/admin')
+            break
+          case 'Инструктор':
+            await router.push('/profile')
+            break
+        }
+
       } catch (e) {
         Vue.$toast.error(e.response.data.error)
         localStorage.removeItem('token')
@@ -109,6 +125,12 @@ const userModule = {
     token: state => state.token,
     paymentTypes: state => state.paymentTypes,
     user: state => state.user,
+    userEvents: function (state, getters, rootState, rootGetters) {
+      return rootGetters.events.filter((e) => {
+        return e.student._id === state.user._id
+      })
+    },
+    userPayments: state => state.user.payments,
     users: state => state.users,
     instructors: function (state) {
       return state.users.filter((u) => {

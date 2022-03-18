@@ -47,7 +47,7 @@ async function getEvents() {
     },
     {
       $lookup: {
-        from: 'instructors',
+        from: 'users',
         localField: 'instructor',
         foreignField: '_id',
         as: 'instructor'
@@ -55,7 +55,7 @@ async function getEvents() {
     },
     {
       $lookup: {
-        from: 'students',
+        from: 'users',
         localField: 'student',
         foreignField: '_id',
         as: 'student'

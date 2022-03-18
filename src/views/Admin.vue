@@ -250,7 +250,7 @@ export default {
       this.$toast.success(`Класс добавлен`)
     },
     async updateInstructor(instructor) {
-      await this.$store.dispatch('updateInstructor', instructor)
+      await this.$store.dispatch('updateUser', instructor)
       this.$toast.success(`Инструктор обновлён`)
     },
     async updateSchool(school) {
@@ -258,7 +258,7 @@ export default {
       this.$toast.success(`Класс обновлён`)
     },
     async updateStudent(student) {
-      await this.$store.dispatch('updateStudent', student)
+      await this.$store.dispatch('updateUser', student)
       this.$toast.success(`Ученик обновлён`)
     },
   },

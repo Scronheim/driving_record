@@ -95,12 +95,9 @@ export default {
     user: {
       email: null,
       name: null,
-      car: null,
       school: null,
-      disabled: false,
       phone: null,
       password: null,
-      added: false,
     },
     confirmPassword: null,
   }),
@@ -114,6 +111,7 @@ export default {
     },
     async register() {
       await this.$store.dispatch('register', this.user)
+      this.$toast.success('Вы успешно зарегистрировались')
       this.registerForm = false
     }
   }

@@ -36,7 +36,7 @@ export default {
     menu: [
       {text: 'Онлайн запись', to: '/', icon: 'mdi-pen-plus', allowedRoles: ['Ученик', 'Администратор']},
       {text: 'Профиль', to: '/profile', icon: 'mdi-account', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
-      {text: 'Сообщения', to: '/messages', icon: 'mdi-message', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
+      // {text: 'Сообщения', to: '/messages', icon: 'mdi-message', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
       {text: 'Классы', to: '/schools', icon: 'mdi-domain', allowedRoles: ['Администратор']},
       {text: 'Инструктора', to: '/instructors', icon: 'mdi-human-male-board', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
       // {text: 'Ученики', to: '/students', icon: 'mdi-school'},

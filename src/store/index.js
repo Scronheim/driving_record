@@ -11,7 +11,18 @@ export default new Vuex.Store({
     apiUrl: 'http://89.223.127.100:3000/api',
   },
   mutations: {},
-  actions: {},
+  actions: {
+    async getAllData({dispatch}) {
+      await dispatch('aboutMe')
+      await dispatch('getGroups')
+      await dispatch('getEvents')
+      await dispatch('getEventTypes')
+      await dispatch('getEventStatuses')
+      await dispatch('getUsers')
+      await dispatch('getPaymentTypes')
+      await dispatch('getRoles')
+    }
+  },
   modules: {
     schools: schoolModule,
     events: eventModule,

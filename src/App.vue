@@ -50,13 +50,7 @@ export default {
     this.$vuetify.theme.dark = true
     this.$store.commit('getToken')
     if (this.$store.getters.token) {
-      this.$store.dispatch('aboutMe')
-      this.$store.dispatch('getEvents')
-      this.$store.dispatch('getEventTypes')
-      this.$store.dispatch('getEventStatuses')
-      this.$store.dispatch('getUsers')
-      this.$store.dispatch('getPaymentTypes')
-      this.$store.dispatch('getRoles')
+      this.$store.dispatch('getAllData')
     }
   },
   computed: {

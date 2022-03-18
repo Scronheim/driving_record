@@ -1,6 +1,6 @@
 <template>
   <v-card-text>
-    <v-checkbox dense label="Показать только недобавленных" v-model="showOnlyNotAdded"/>
+    <v-checkbox dense label="Показать только ожидающих добавления" v-model="showOnlyNotAdded"/>
     <v-data-table
         dense
         :footer-props="{'items-per-page-options': rowsPerPageItems}"
@@ -60,6 +60,23 @@
           </template>
         </v-edit-dialog>
       </template>
+      <template v-slot:item.group="{item}">
+        <v-edit-dialog
+            @save="updateStudent(item)"
+            :return-value.sync="item.group"
+        >
+          {{ studentGroup(item) }}
+          <template v-slot:input>
+            <v-select
+                dense
+                v-model="item.group"
+                :items="$store.getters.groups"
+                item-value="_id"
+                item-text="name"
+            />
+          </template>
+        </v-edit-dialog>
+      </template>
       <template v-slot:item.added="{item}">
         <v-simple-checkbox
             v-ripple
@@ -84,11 +101,13 @@ export default {
   computed: {
     students() {
       if (this.showOnlyNotAdded) {
-        return this.$store.getters.students.filter((s) => {
-          return s.added === false
+        return this.$store.getters.users.filter((u) => {
+          return u.added === false && u.role.role === 'Ученик'
         })
       }
-      return this.$store.getters.students
+      return this.$store.getters.users.filter((u) => {
+        return u.role.role === 'Ученик'
+      })
     },
   },
   data: () => ({
@@ -100,6 +119,7 @@ export default {
       {text: 'Email', align: 'start', sortable: false, value: 'email'},
       {text: 'Телефон', align: 'start', sortable: false, value: 'phone'},
       {text: 'Класс', align: 'start', sortable: true, value: 'school'},
+      {text: 'Группа', align: 'start', sortable: true, value: 'group'},
       {text: 'Добавлен', align: 'start', sortable: false, value: 'added'},
       {text: 'Заблокирован', align: 'start', sortable: true, value: 'disabled'},
     ],
@@ -108,6 +128,15 @@ export default {
     updateStudent(student) {
       this.$emit('updateStudent', student)
     },
+    studentGroup(student) {
+      const group = this.$store.getters.groups.find((g) => {
+        return g._id === student.group
+      })
+      if (group) {
+        return group.name
+      }
+      return ''
+    }
   }
 }
 </script>

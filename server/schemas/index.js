@@ -5,6 +5,7 @@ const db = {}
 
 db.mongoose = mongoose
 db.school = require("./school.schema")
+db.group = require("./group.schema")
 db.user = require("./user.schema")
 db.role = require("./role.schema")
 db.event = require("./event.schema")

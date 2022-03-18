@@ -35,9 +35,14 @@ exports.signUp = (req, res) => {
     phone: req.body.phone,
     email: req.body.email,
     school: req.body.school,
-    disabled: req.body.disabled,
+    disabled: false,
     password: bcrypt.hashSync(req.body.password, 8),
-    added: req.body.added
+    added: false,
+    group: null,
+    payments: [],
+    role: ObjectId('622062c9056fad1a42ab2cf1'),
+    car: null,
+    drivingCost: 800,
   });
 
   user.save()
@@ -54,9 +59,9 @@ exports.signIn = async (req, res) => {
     {
       $lookup: {
         from: 'roles',
-        localField: 'roles',
+        localField: 'role',
         foreignField: '_id',
-        as: 'roles'
+        as: 'role'
       }
     },
     {
@@ -81,13 +86,12 @@ exports.signIn = async (req, res) => {
     return jsonResponse(res, null, err)
   })
   user = user[0]
-  if (!user.added) {
-    return jsonResponse(res, null, 'Пользователь ещё не активирован. Дождитесь активации администратором', false, 401)
-  }
   if (!user) {
     return jsonResponse(res, null, 'Не правильный логин или пароль', false, 401)
   }
-
+  if (!user.added) {
+    return jsonResponse(res, null, 'Пользователь ещё не активирован. Дождитесь активации администратором', false, 401)
+  }
   if (user.locked) {
     return jsonResponse(res, null, 'Пользователь заблокирован', false, 401)
   }
@@ -135,14 +139,6 @@ async function getStudentById(id) {
         as: 'school'
       }
     },
-    {
-      $lookup: {
-        from: 'school_groups',
-        localField: 'group',
-        foreignField: '_id',
-        as: 'group'
-      }
-    },
     {$unwind: {
         path: '$role',
         preserveNullAndEmptyArrays: true,
@@ -150,11 +146,6 @@ async function getStudentById(id) {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$group',
         preserveNullAndEmptyArrays: true,
       }
     },
