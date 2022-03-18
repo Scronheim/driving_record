@@ -11,7 +11,7 @@
           <b>Всего занятий:</b> {{ totalEvents }}
         </v-col>
         <v-col>
-          <b>Откатанных:</b> {{ totalFinished }}
+          <b>Завершенных:</b> {{ totalFinished }}
         </v-col>
         <v-col>
           <b>Запланированных:</b> {{ totalPlaned }}
@@ -54,17 +54,17 @@ export default {
     },
     totalFinished() {
       return this.studentEvents.filter((e) => {
-        return e.status === '623190de926bff909550602e'
+        return e.status._id === '623190de926bff909550602e'
       }).length
     },
     totalPlaned() {
       return this.studentEvents.filter((e) => {
-        return e.status === '623190b8926bff909550602c'
+        return e.status._id === '623190b8926bff909550602c'
       }).length
     },
     totalAbsence() {
       return this.studentEvents.filter((e) => {
-        return e.status === '623190e8926bff909550602f'
+        return e.status._id === '623190e8926bff909550602f'
       }).length
     },
   },
