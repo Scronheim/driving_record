@@ -6,20 +6,23 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import _ from 'lodash'
 import vuetify from './plugins/vuetify'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
 Vue.config.productionTip = false
-Vue.prototype.$dayjs = dayjs
-Vue.prototype.$_ = _
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
+dayjs.extend(isSameOrAfter)
 
 dayjs.tz.setDefault('Asia/Yekaterinburg')
+
+Vue.prototype.$dayjs = dayjs
+Vue.prototype.$_ = _
 
 Vue.use(Toast, {
   transition: 'Vue-Toastification__bounce',

@@ -43,6 +43,7 @@ exports.signUp = (req, res) => {
     role: ObjectId('622062c9056fad1a42ab2cf1'),
     car: null,
     drivingCost: 800,
+    course: null,
   });
 
   user.save()
@@ -72,6 +73,27 @@ exports.signIn = async (req, res) => {
         as: 'school'
       }
     },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'course'
+      }
+    },
+    {
+      $lookup: {
+        from: 'groups',
+        localField: 'group',
+        foreignField: '_id',
+        as: 'group'
+      }
+    },
+    {$unwind: {
+        path: '$group',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
     {$unwind: {
         path: '$role',
         preserveNullAndEmptyArrays: true,
@@ -79,6 +101,11 @@ exports.signIn = async (req, res) => {
     },
     {$unwind: {
         path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },
@@ -139,6 +166,27 @@ async function getStudentById(id) {
         as: 'school'
       }
     },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'course'
+      }
+    },
+    {
+      $lookup: {
+        from: 'groups',
+        localField: 'group',
+        foreignField: '_id',
+        as: 'group'
+      }
+    },
+    {$unwind: {
+        path: '$group',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
     {$unwind: {
         path: '$role',
         preserveNullAndEmptyArrays: true,
@@ -146,6 +194,11 @@ async function getStudentById(id) {
     },
     {$unwind: {
         path: '$school',
+        preserveNullAndEmptyArrays: true,
+      }
+    },
+    {$unwind: {
+        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },
@@ -169,10 +222,10 @@ async function getInstructorById(id) {
     },
     {
       $lookup: {
-        from: 'cars',
-        localField: 'car',
+        from: 'courses',
+        localField: 'course',
         foreignField: '_id',
-        as: 'car'
+        as: 'course'
       }
     },
     {
@@ -194,7 +247,7 @@ async function getInstructorById(id) {
       }
     },
     {$unwind: {
-        path: '$car',
+        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },

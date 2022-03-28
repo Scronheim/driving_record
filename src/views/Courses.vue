@@ -50,7 +50,10 @@
                         <span class="v-label theme--dark">Дополнительное вождение: <b>{{ additionalDrivingCost }}р</b></span>
                       </v-list-item>
                       <v-list-item>
-                        <v-btn light x-large block color="yellow">{{ totalCost }}р</v-btn>
+                        <v-btn light x-large block color="yellow"
+                               :disabled="$store.getters.userHasCourse"
+                               @click="selectCourse">
+                          {{ totalCost }}р</v-btn>
                       </v-list-item>
                     </v-list>
                   </v-col>
@@ -59,18 +62,18 @@
                     <v-list dense>
                       <v-list-item>
                         <v-list-item-icon>
-                          <v-icon>mdi-minus</v-icon>
+                          <v-icon color="primary">mdi-minus</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>
-                          500 при сдаче экзамено в ГИБДД в Перми
+                          500р при сдаче экзамено в ГИБДД в Перми
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item>
                         <v-list-item-icon>
-                          <v-icon>mdi-minus</v-icon>
+                          <v-icon color="primary">mdi-minus</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>
-                          1500 при сдаче экзаменов в других городах или самостоятельно
+                          1500р при сдаче экзаменов в других городах или самостоятельно
                         </v-list-item-title>
                       </v-list-item>
                     </v-list>
@@ -248,12 +251,24 @@ export default {
     },
   },
   data: () => ({
-    tab: 1,
+    tab: 0,
     courseInClass: true,
     manualTransmission: true,
     drivingCount: 3,
     labels: [15, 20, 25, 30],
   }),
+  methods: {
+    async selectCourse() {
+      const course = this.$store.getters.courses.find((c) => {
+        return (c.maxCost === this.totalCost) || (c.minCost === this.totalCost)
+      })
+      if (course) {
+        this.$store.commit('setCourseToUser', course._id)
+        await this.$store.dispatch('updateUser')
+        this.$toast.success('Курс успешно выбран')
+      }
+    }
+  }
 }
 </script>
 

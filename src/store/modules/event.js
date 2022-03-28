@@ -18,7 +18,10 @@ const eventModule = {
     },
     addEvent(state, event) {
       state.events.push(event)
-    }
+    },
+    removeEvent(state, eventIndex) {
+      state.events.splice(eventIndex, 1)
+    },
   },
   actions: {
     async getEvents({commit, rootState}) {

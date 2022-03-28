@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-      dense
+      dense no-data-text="Нет данных"
       :headers="eventHeaders"
       :items="studentEvents"
       :item-class="rowClass"

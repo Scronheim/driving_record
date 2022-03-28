@@ -1,5 +1,8 @@
 <template>
-  <v-data-table dense :headers="paymentHeaders" :items="studentPayments">
+  <v-data-table
+      dense no-data-text="Нет данных"
+      :headers="paymentHeaders"
+      :items="studentPayments">
     <template v-slot:top>
       <v-row>
         <v-col>
@@ -77,7 +80,7 @@ export default {
           return prev + next
         })
       }
-      return []
+      return 0
     },
     totalTheory() {
       if (this.studentPayments.length > 0) {
@@ -89,7 +92,7 @@ export default {
           return prev + next
         })
       }
-      return []
+      return 0
     },
     totalDriving() {
       const drivings = this.studentPayments.filter((p) => {

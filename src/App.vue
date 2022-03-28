@@ -29,6 +29,10 @@
       </div>
 
       <v-spacer/>
+      Вы вошли как
+      <v-btn text to="/profile">
+        {{ user.name }}
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer">
@@ -54,6 +58,9 @@ export default {
     }
   },
   computed: {
+    user() {
+      return this.$store.getters.user
+    },
     isMobile() {
       return this.$vuetify.breakpoint.mobile
     }

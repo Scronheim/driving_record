@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema(
     role: {
       type: mongoose.Types.ObjectId,
     },
+    course: {
+      type: mongoose.Types.ObjectId,
+    },
     phone: {
       type: String,
     },

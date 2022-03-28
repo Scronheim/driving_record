@@ -17,12 +17,19 @@ const userModule = {
       car: null,
       drivingCost: null,
       payments: [],
+      course: {
+        driving: {},
+        theory: {},
+      },
     },
     users: [],
     token: null,
     paymentTypes: [],
   }),
   mutations: {
+    setCourseToUser(state, courseId) {
+      state.user.course = courseId
+    },
     setPaymentTypes(state, types) {
       state.paymentTypes = types
     },
@@ -74,8 +81,9 @@ const userModule = {
       const {data} = await axios.get(`${rootState.apiUrl}/users`)
       commit('setUsers', data.data)
     },
-    async updateUser({rootState, dispatch}, payload) {
-      await axios.patch(`${rootState.apiUrl}/users`, payload)
+    async updateUser({rootState, dispatch, state}, payload) {
+      const user = payload ? payload : state.user
+      await axios.patch(`${rootState.apiUrl}/users`, user)
       dispatch('getUsers')
     },
     async changePassword({rootState}, payload) {
@@ -153,6 +161,7 @@ const userModule = {
     isStudent: function (state) {
       return state.user.role.role === 'Ученик'
     },
+    userHasCourse: state => !!state.user.course,
   }
 }
 

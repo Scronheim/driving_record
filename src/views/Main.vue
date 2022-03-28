@@ -14,7 +14,7 @@
 
       <v-stepper-content step="1">
         <v-alert type="info">
-          Стоимость занятия {{ user.drivingCost }}р.
+          Стоимость занятия {{ user.course.driving.cost }}р.
         </v-alert>
         <v-row v-for="(chunk, chunkIndex) in chunkedInstructors" :key="`chunk-${chunkIndex}`">
           <v-col v-for="(instructor, instructorIndex) in chunk" :key="`instructor-${instructorIndex}`">
@@ -32,7 +32,6 @@
                     <v-btn block text color="primary">{{ instructor.car.lpn }}</v-btn>
                     <v-btn block text color="primary">{{ instructor.car.transmission }}</v-btn>
                     <v-btn block text color="primary">{{ instructor.car.color }}</v-btn>
-                    <v-btn block text color="primary">{{ instructor.school.address }}</v-btn>
                     <v-btn block text color="primary" :href="`tel: ${instructor.phone}`" @click.stop>{{ instructor.phone }}</v-btn>
                   </v-col>
                 </v-row>
@@ -75,7 +74,12 @@
         </v-menu>
         <v-btn text color="success"
                :disabled="newEvents.length === 0"
-               @click="addNewEvent">Записаться</v-btn>
+               @click="addNewEvent">Записаться
+        </v-btn>
+        <v-alert type="info">
+          Вы можете записаться в 1 день максимум на 2 занятия. На последующие занятия можно записаться через администратора.
+          Отписаться за сутки невозможно
+        </v-alert>
         <v-calendar
             ref="calendar"
             v-model="focus"
@@ -84,7 +88,7 @@
             :type="type"
             :events="events"
             @click:date="viewDay"
-            @mousedown:time="startTime"
+            @mousedown:time="register"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
             first-time="08:00"
@@ -108,7 +112,7 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
 
 export default {
   name: 'Main',
@@ -118,7 +122,7 @@ export default {
     },
     events() {
       const events = this.$store.getters.events.filter((e) => {
-        return e.instructor._id === this.record.instructor._id
+        return e.instructor === this.record.instructor._id
       })
       events.forEach((e) => {
         e.name = e.type.name
@@ -175,38 +179,37 @@ export default {
       })
       this.newEvents = []
     },
-    startTime (tms) {
+    register (tms) {
       const mouse = this.toTime(tms)
-      // const eventIndex = this.events.findIndex((e) => {
-      //   return e.start === this.roundTime(mouse)
-      // })
-      this.createStart = this.roundTime(mouse)
-      this.createEvent = {
-        type: '6221d6203962a189d7ade049',
-        name: 'Занято',
-        color: 'error',
-        start: this.createStart,
-        end: parseInt(this.$dayjs(this.createStart).add(1.5, 'h').format('x')),
-        instructor: this.record.instructor,
-        student: this.record.student,
-        cost: this.$store.getters.user.drivingCost,
-        timed: true,
+      const eventIndex = this.newEvents.findIndex((e) => {
+        return e.start === this.roundTime(mouse)
+      })
+      if (eventIndex > -1) {
+        this.newEvents.splice(eventIndex, 1)
+        this.$store.commit('removeEvent', eventIndex)
+        return
       }
-
-      this.newEvents.push({
+      if (this.newEvents.length >= 2) {
+        this.$toast.error('Записаться можно не больше чем на 2 занятия в сутки')
+        return
+      }
+      this.createStart = this.roundTime(mouse)
+      const event = {
         type: '6221d6203962a189d7ade049',
         name: 'Занято',
         color: 'error',
         start: this.createStart,
-        end: parseInt(this.$dayjs(this.createStart).add(1.5, 'h').format('x')),
+        end: parseInt(dayjs(this.createStart).add(1.5, 'h').format('x')),
         instructor: this.record.instructor._id,
         student: this.record.student._id,
-        cost: this.$store.getters.user.drivingCost,
+        cost: this.$store.getters.user.course.driving.cost,
         timed: true,
         status: '623190b8926bff909550602c'
-      })
+      }
 
-      this.$store.commit('addEvent', this.createEvent)
+      this.newEvents.push(event)
+
+      this.$store.commit('addEvent', event)
     },
     roundTime (time, down = true) {
       const roundTo = 90 // minutes
@@ -220,8 +223,12 @@ export default {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime()
     },
     viewDay({date}) {
-      this.focus = date
-      this.type = 'day'
+      if (dayjs(date).isSameOrAfter(dayjs())) {
+        this.focus = date
+        this.type = 'day'
+      } else {
+        this.$toast.warning(`Выберите дату после ${date}`)
+      }
     },
     selectInstructor(instructor) {
       this.record.instructor = instructor
@@ -243,38 +250,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.v-event-draggable {
-  padding-left: 6px;
-}
 
-.v-event-timed {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.v-event-drag-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 4px;
-  cursor: ns-resize;
-
-  &::after {
-    display: none;
-    position: absolute;
-    left: 50%;
-    height: 4px;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
-    width: 16px;
-    margin-left: -8px;
-    opacity: 0.8;
-    content: '';
-  }
-
-  &:hover::after {
-    display: block;
-  }
-}
 </style>

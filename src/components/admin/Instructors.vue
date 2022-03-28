@@ -41,23 +41,6 @@
     <template v-slot:item.car="{item}">
       <v-btn text small @click="openCarInfoDialog(item)">{{ item.car.model }} (КПП {{ item.car.transmission }})</v-btn>
     </template>
-    <template v-slot:item.school="{item}">
-      <v-edit-dialog
-          @save="updateInstructor(item)"
-          :return-value.sync="item.school"
-      >
-        {{ item.school.address }}
-        <template v-slot:input>
-          <v-select
-              dense
-              v-model="item.school"
-              :items="$store.getters.schools"
-              item-value="_id"
-              item-text="address"
-          />
-        </template>
-      </v-edit-dialog>
-    </template>
     <template v-slot:item.disabled="{item}">
       <v-simple-checkbox
           v-ripple
@@ -83,7 +66,6 @@ export default {
       {text: 'Email', align: 'start', sortable: false, value: 'email'},
       {text: 'Телефон', align: 'start', sortable: false, value: 'phone'},
       {text: 'Автомобиль', align: 'start', sortable: false, value: 'car'},
-      {text: 'Класс', align: 'start', sortable: true, value: 'school'},
       {text: 'Заблокирован', align: 'start', sortable: true, value: 'disabled'},
     ],
   }),

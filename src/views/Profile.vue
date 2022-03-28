@@ -4,7 +4,7 @@
       <v-card-title>{{ user.name }}</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col :cols="$vuetify.breakpoint.mobile ? '' : 3">
+          <v-col :cols="$vuetify.breakpoint.mobile ? '' : 2">
             <v-list dense>
               <v-list-item title="Email">
                 <v-tooltip top>
@@ -33,6 +33,21 @@
                 <v-list-item-content>
                   <v-list-item-title>
                     <v-btn text small>{{ user.school.address }}</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item title="Группа" v-if="!$store.getters.isAdmin">
+                <v-tooltip top>
+                  <template v-slot:activator="{on, attrs}">
+                    <v-list-item-icon v-on="on" v-bind="attrs">
+                      <v-icon>mdi-account-group</v-icon>
+                    </v-list-item-icon>
+                  </template>
+                  <span>Группа</span>
+                </v-tooltip>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <v-btn text small>{{ user.group.name }}</v-btn>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -85,6 +100,9 @@
             <v-btn text color="primary" @click="changePasswordDialog = true">
               Сменить пароль
             </v-btn>
+            <v-btn text color="yellow" @click="courseDialog = true">
+              Курс
+            </v-btn>
           </v-col>
           <template v-if="$store.getters.isStudent">
             <v-col>
@@ -125,6 +143,9 @@
         <v-btn text color="success" @click="changePassword">Сменить </v-btn>
       </template>
     </Dialog>
+    <Dialog v-model="courseDialog" title="Просмотр выбранного курса">
+
+    </Dialog>
   </v-container>
 </template>
 
@@ -148,6 +169,7 @@ export default {
     },
   },
   data: () => ({
+    courseDialog: false,
     showPassword: false,
     changePasswordDialog: false,
     newPassword: {
