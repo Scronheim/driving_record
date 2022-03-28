@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import schoolModule from '@/store/modules/school'
 import eventModule from '@/store/modules/event'
 import userModule from '@/store/modules/user'
+import courseModule from '@/store/modules/course'
 
 Vue.use(Vuex)
 
@@ -27,5 +28,6 @@ export default new Vuex.Store({
     schools: schoolModule,
     events: eventModule,
     users: userModule,
+    courses: courseModule,
   }
 })

@@ -12,5 +12,6 @@ db.event = require("./event.schema")
 db.paymentType = require("./payment_type.schema")
 db.eventType = require("./event_type.schema")
 db.eventStatus = require("./event_status.schema")
+db.course = require("./course.schema")
 
 module.exports = db

@@ -24,6 +24,7 @@ require('./routes/user.route')(app)
 // require('./routes/students.route')(app)
 require('./routes/event.route')(app)
 require('./routes/school.route')(app)
+require('./routes/course.route')(app)
 
 app.use(router)
 

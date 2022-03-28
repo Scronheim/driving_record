@@ -49,6 +49,11 @@ const routes = [
     name: 'Admin page',
     component: () => import(/* webpackChunkName: "Admin page" */ '../views/Admin')
   },
+  {
+    path: '/courses',
+    name: 'courses page',
+    component: () => import(/* webpackChunkName: "courses page" */ '../views/Courses')
+  },
 ]
 
 const router = new VueRouter({
