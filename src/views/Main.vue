@@ -14,7 +14,7 @@
 
       <v-stepper-content step="1">
         <v-alert type="info">
-          Стоимость занятия {{ user.course.driving.cost }}р.
+          Стоимость занятия {{ user.course.driving.cost }}р. Вам доступно {{ availableSumForDriving }}р
         </v-alert>
         <v-row v-for="(chunk, chunkIndex) in chunkedInstructors" :key="`chunk-${chunkIndex}`">
           <v-col v-for="(instructor, instructorIndex) in chunk" :key="`instructor-${instructorIndex}`">
@@ -117,6 +117,9 @@ import dayjs from 'dayjs'
 export default {
   name: 'Main',
   computed: {
+    availableSumForDriving() {
+      return (this.user.course.driving.class - 4) * this.user.course.driving.cost
+    },
     filteredInstructors() {
       return this.$store.getters.instructors.filter((i) => {
         return ((this.instructorFilter === '') || (i.name.toUpperCase().indexOf(this.instructorFilter.toUpperCase()) >= 0))
