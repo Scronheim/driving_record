@@ -7,7 +7,6 @@
         <th>Телефон</th>
         <th>Класс</th>
         <th>Группа</th>
-        <th>Стоимость обучения</th>
         <th>Дата регистрации</th>
       </tr>
     </thead>
@@ -108,26 +107,6 @@
           </v-edit-dialog>
           <template v-else>
             {{ studentGroup.name }}
-          </template>
-        </td>
-        <td>
-          <v-edit-dialog v-if="$store.getters.isAdmin"
-                         @save="updateStudent"
-                         :return-value.sync="student.drivingCost"
-          >
-            {{ student.drivingCost }}р.
-            <template v-slot:input>
-              <v-select
-                  dense
-                  solo-inverted
-                  hide-details
-                  :items="[800, 900, 1000, 1100, 1200, 1300, 1400, 1500]"
-                  v-model="student.drivingCost"
-              />
-            </template>
-          </v-edit-dialog>
-          <template v-else>
-            {{ student.drivingCost }}
           </template>
         </td>
         <td>{{ student.createdAt | humanDate }}</td>

@@ -69,69 +69,27 @@ export default {
     studentPayments: {
       type: Array,
       required: true,
+    },
+    student: {
+      type: Object,
+      required: true,
     }
   },
   computed: {
     totalAmount() {
-      if (this.studentPayments.length > 0) {
-        return this.studentPayments.map((p) => {
-          return p.sum
-        }).reduce((prev, next) => {
-          return prev + next
-        })
-      }
-      return 0
+      return this.student.course.cost
     },
     totalTheory() {
-      if (this.studentPayments.length > 0) {
-        return this.studentPayments.filter((p) => {
-          return p.type === '622f0b6386788d850dc496f3'
-        }).map((p) => {
-          return p.sum
-        }).reduce((prev, next) => {
-          return prev + next
-        })
-      }
-      return 0
+      return this.student.course.theory.cost
     },
     totalDriving() {
-      const drivings = this.studentPayments.filter((p) => {
-        return p.type === '622f0b6c86788d850dc496f4'
-      })
-      if (drivings.length > 0) {
-        return drivings.map((p) => {
-          return p.sum
-        }).reduce((prev, next) => {
-          return prev + next
-        })
-      }
-      return 0
+      return (this.student.course.driving.class - 4) * this.student.course.driving.cost
     },
     totalAdditionalDriving() {
-      const additionalDrivings = this.studentPayments.filter((p) => {
-        return p.type === '622f0b6c86788d850dc496f5'
-      })
-      if (additionalDrivings.length > 0) {
-        return additionalDrivings.map((p) => {
-          return p.sum
-        }).reduce((prev, next) => {
-          return prev + next
-        })
-      }
       return 0
     },
     totalExam() {
-      const exams = this.studentPayments.filter((p) => {
-        return p.type === '622f0b6c86788d850dc496f6'
-      })
-      if (exams.length > 0) {
-        return exams.map((p) => {
-          return p.sum
-        }).reduce((prev, next) => {
-          return prev + next
-        })
-      }
-      return 0
+      return this.student.course.driving.cost * 4
     },
   },
   data: () => ({

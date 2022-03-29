@@ -97,14 +97,14 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list>
+            <v-btn text color="yellow" v-if="$store.getters.userHasCourse" @click="courseDialog = true">
+              Выбранный курс
+            </v-btn>
             <v-btn text color="success" @click="$router.push('/')">
               Записаться на вождение
             </v-btn>
             <v-btn text color="primary" @click="changePasswordDialog = true">
               Сменить пароль
-            </v-btn>
-            <v-btn text color="yellow" v-if="$store.getters.userHasCourse" @click="courseDialog = true">
-              Выбранный курс
             </v-btn>
           </v-col>
           <template v-if="$store.getters.isStudent">
@@ -112,7 +112,9 @@
               <StudentEvents :student-events="$store.getters.userEvents"/>
             </v-col>
             <v-col>
-              <StudentPayments :student-payments="$store.getters.userPayments"/>
+              <StudentPayments
+                  :student="user"
+                  :student-payments="$store.getters.userPayments"/>
             </v-col>
           </template>
         </v-row>
@@ -146,7 +148,7 @@
         <v-btn text color="success" @click="changePassword">Сменить </v-btn>
       </template>
     </Dialog>
-    <Dialog v-model="courseDialog" title="Просмотр выбранного курса" width="60%">
+    <Dialog v-if="$store.getters.isStudent" v-model="courseDialog" title="Просмотр выбранного курса" width="60%">
       <template v-slot:body>
         <v-simple-table dense>
           <thead>

@@ -16,6 +16,7 @@
             <v-btn text color="success" @click="newPaymentDialog = true">Добавить платёж</v-btn>
             <StudentPayments
                 :student-payments="student.payments"
+                :student="student"
                 @updateStudent="updateStudent"
             />
           </v-col>
@@ -64,6 +65,10 @@ export default {
       return {
         school: {},
         payments: [],
+        course: {
+          driving: {},
+          theory: {},
+        },
       }
     },
     studentEvents() {

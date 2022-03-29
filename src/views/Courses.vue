@@ -65,7 +65,7 @@
                           <v-icon color="primary">mdi-minus</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>
-                          500р при сдаче экзамено в ГИБДД в Перми
+                          500р при сдаче экзаменов в ГИБДД в Перми
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item>
@@ -77,7 +77,7 @@
                         </v-list-item-title>
                       </v-list-item>
                     </v-list>
-                    <span class="text-h5">Стоимость занятий для курсантов других автошкол (восстановлене навыков)</span>
+                    <span class="text-h5">Стоимость занятий для курсантов других автошкол (восстановление навыков)</span>
                     <v-simple-table dense>
                       <thead>
                         <tr>
