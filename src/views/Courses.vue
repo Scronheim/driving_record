@@ -259,11 +259,21 @@ export default {
   }),
   methods: {
     async selectCourse() {
-      const course = this.$store.getters.courses.find((c) => {
-        return (c.maxCost === this.totalCost) || (c.minCost === this.totalCost)
-      })
+      const course = {
+        transmission: this.manualTransmission ? 'Механика': 'Автомат',
+        cost: this.totalCost,
+        driving: {
+          class: this.labels[this.drivingCount],
+          cost: this.oneDrivingCost,
+        },
+        theory: {
+          place: this.courseInClass ? 'Класс': 'Онлайн',
+          cost: this.theoryCost
+        },
+        additionalDrivingCost: this.additionalDrivingCost
+      }
       if (course) {
-        this.$store.commit('setCourseToUser', course._id)
+        this.$store.commit('setCourseToUser', course)
         await this.$store.dispatch('updateUser')
         this.$toast.success('Курс успешно выбран')
       }

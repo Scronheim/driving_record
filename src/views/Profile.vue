@@ -97,11 +97,14 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list>
+            <v-btn text color="success" @click="$router.push('/')">
+              Записаться на вождение
+            </v-btn>
             <v-btn text color="primary" @click="changePasswordDialog = true">
               Сменить пароль
             </v-btn>
-            <v-btn text color="yellow" @click="courseDialog = true">
-              Курс
+            <v-btn text color="yellow" v-if="$store.getters.userHasCourse" @click="courseDialog = true">
+              Выбранный курс
             </v-btn>
           </v-col>
           <template v-if="$store.getters.isStudent">
@@ -143,8 +146,31 @@
         <v-btn text color="success" @click="changePassword">Сменить </v-btn>
       </template>
     </Dialog>
-    <Dialog v-model="courseDialog" title="Просмотр выбранного курса">
-
+    <Dialog v-model="courseDialog" title="Просмотр выбранного курса" width="60%">
+      <template v-slot:body>
+        <v-simple-table dense>
+          <thead>
+            <tr>
+              <th>Общая сумма</th>
+              <th>КПП</th>
+              <th>Занятий по вождению</th>
+              <th>Цена 1 занятия</th>
+              <th>Стоимость теории</th>
+              <th>Цена за доп. вождение</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ user.course.cost }}р</td>
+              <td>{{ user.course.transmission }}</td>
+              <td>{{ user.course.driving.class }}</td>
+              <td>{{ user.course.driving.cost }}р</td>
+              <td>{{ user.course.theory.cost }}р ({{ user.course.theory.place }})</td>
+              <td>{{ user.course.additionalDrivingCost }}р</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+      </template>
     </Dialog>
   </v-container>
 </template>

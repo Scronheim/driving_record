@@ -15,7 +15,6 @@ const userModule = {
       disabled: false,
       added: false,
       car: null,
-      drivingCost: null,
       payments: [],
       course: {
         driving: {},
@@ -27,8 +26,8 @@ const userModule = {
     paymentTypes: [],
   }),
   mutations: {
-    setCourseToUser(state, courseId) {
-      state.user.course = courseId
+    setCourseToUser(state, course) {
+      state.user.course = course
     },
     setPaymentTypes(state, types) {
       state.paymentTypes = types
@@ -60,8 +59,11 @@ const userModule = {
         disabled: false,
         added: false,
         car: null,
-        drivingCost: null,
         payments: [],
+        course: {
+          driving: {},
+          theory: {},
+        },
       }
     }
   },
@@ -84,6 +86,7 @@ const userModule = {
     async updateUser({rootState, dispatch, state}, payload) {
       const user = payload ? payload : state.user
       await axios.patch(`${rootState.apiUrl}/users`, user)
+      dispatch('aboutMe')
       dispatch('getUsers')
     },
     async changePassword({rootState}, payload) {

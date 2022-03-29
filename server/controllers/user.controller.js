@@ -109,14 +109,6 @@ async function getUsers() {
         as: 'school'
       }
     },
-    {
-      $lookup: {
-        from: 'courses',
-        localField: 'course',
-        foreignField: '_id',
-        as: 'course'
-      }
-    },
     {$unwind: {
         path: '$role',
         preserveNullAndEmptyArrays: true,
@@ -124,11 +116,6 @@ async function getUsers() {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },

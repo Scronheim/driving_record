@@ -43,7 +43,7 @@ exports.signUp = (req, res) => {
     role: ObjectId('622062c9056fad1a42ab2cf1'),
     car: null,
     drivingCost: 800,
-    course: null,
+    course: {},
   });
 
   user.save()
@@ -75,14 +75,6 @@ exports.signIn = async (req, res) => {
     },
     {
       $lookup: {
-        from: 'courses',
-        localField: 'course',
-        foreignField: '_id',
-        as: 'course'
-      }
-    },
-    {
-      $lookup: {
         from: 'groups',
         localField: 'group',
         foreignField: '_id',
@@ -101,11 +93,6 @@ exports.signIn = async (req, res) => {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },
@@ -168,14 +155,6 @@ async function getStudentById(id) {
     },
     {
       $lookup: {
-        from: 'courses',
-        localField: 'course',
-        foreignField: '_id',
-        as: 'course'
-      }
-    },
-    {
-      $lookup: {
         from: 'groups',
         localField: 'group',
         foreignField: '_id',
@@ -194,11 +173,6 @@ async function getStudentById(id) {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },
@@ -222,14 +196,6 @@ async function getInstructorById(id) {
     },
     {
       $lookup: {
-        from: 'courses',
-        localField: 'course',
-        foreignField: '_id',
-        as: 'course'
-      }
-    },
-    {
-      $lookup: {
         from: 'schools',
         localField: 'school',
         foreignField: '_id',
@@ -243,11 +209,6 @@ async function getInstructorById(id) {
     },
     {$unwind: {
         path: '$school',
-        preserveNullAndEmptyArrays: true,
-      }
-    },
-    {$unwind: {
-        path: '$course',
         preserveNullAndEmptyArrays: true,
       }
     },

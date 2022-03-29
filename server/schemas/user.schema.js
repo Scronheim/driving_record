@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
     },
     course: {
-      type: mongoose.Types.ObjectId,
+      type: Object,
     },
     phone: {
       type: String,
@@ -47,9 +47,6 @@ const userSchema = new mongoose.Schema(
     ],
     added: {
       type: Boolean,
-    },
-    drivingCost: {
-      type: Number,
     },
     car: {
       type: Object,

@@ -29,8 +29,8 @@
       </div>
 
       <v-spacer/>
-      Вы вошли как
       <v-btn text to="/profile">
+        <v-icon>mdi-account</v-icon>
         {{ user.name }}
       </v-btn>
     </v-app-bar>

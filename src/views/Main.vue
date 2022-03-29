@@ -117,8 +117,13 @@ import dayjs from 'dayjs'
 export default {
   name: 'Main',
   computed: {
+    filteredInstructors() {
+      return this.$store.getters.instructors.filter((i) => {
+        return ((this.instructorFilter === '') || (i.name.toUpperCase().indexOf(this.instructorFilter.toUpperCase()) >= 0))
+      })
+    },
     chunkedInstructors() {
-      return this.$_.chunk(this.$store.getters.instructors, 5)
+      return this.$_.chunk(this.filteredInstructors, 3)
     },
     events() {
       const events = this.$store.getters.events.filter((e) => {
@@ -135,6 +140,7 @@ export default {
     }
   },
   data: () => ({
+    instructorFilter: '',
     currentStep: 1,
     record: {
       instructor: {},
