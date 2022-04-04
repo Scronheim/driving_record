@@ -7,6 +7,11 @@ const EventStatus = db.eventStatus
 
 const ObjectId = mongoose.Types.ObjectId
 
+exports.removeEvent = async (req, res) => {
+  await Event.findOneAndDelete(req.body.id)
+  return jsonResponse(res, null, null, true, 200)
+}
+
 exports.addEvent = async (req, res) => {
   await Event.insertMany(req.body)
   return jsonResponse(res, null, null, true, 201)

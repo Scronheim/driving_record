@@ -36,10 +36,24 @@
     <template v-slot:item.instructor="{item}">
       {{ item.instructor.name }}
     </template>
+    <template v-slot:item.actions="{item}">
+      <v-tooltip top>
+        <template v-slot:activator="{on, attrs}">
+          <v-btn icon color="error" v-on="on" v-bind="attrs"
+                 :disabled="removeEventButtonIsDisabled(item)"
+                 @click="removeEvent(item)">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+        <span>Отписаться</span>
+      </v-tooltip>
+    </template>
   </v-data-table>
 </template>
 
 <script>
+import dayjs from 'dayjs'
+
 export default {
   name: "StudentEvents",
   props: {
@@ -75,9 +89,19 @@ export default {
       {text: 'Сумма', align: 'start', sortable: false, value: 'cost'},
       {text: 'Статус', align: 'start', sortable: true, value: 'status'},
       {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
+      {text: 'Действия', align: 'start', sortable: false, value: 'actions'},
     ],
   }),
   methods: {
+    removeEventButtonIsDisabled(event) {
+      return !dayjs(event.start).diff(dayjs(), 'd') > 0
+    },
+    removeEvent(event) {
+      const startDate = dayjs(event.start).format('DD.MM.YYYY HH:mm')
+      if (confirm(`Вы уверены что хотите отписаться от занятия, назначенное на ${startDate}?`)) {
+        this.$store.dispatch('removeEvent', event._id)
+      }
+    },
     rowClass(item) {
       switch (item.status._id) {
         case '623190b8926bff909550602c': // Запланировано

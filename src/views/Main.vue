@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-stepper
-        v-if="$store.getters.isLogin"
+        v-if="$store.getters.isStudent"
         v-model="currentStep"
         vertical
     >
@@ -74,7 +74,7 @@
         </v-menu>
         <v-btn text color="success"
                :disabled="newEvents.length === 0"
-               @click="addNewEvent">Записаться
+               @click="register">Записаться
         </v-btn>
         <v-alert type="info">
           Вы можете записаться в 1 день максимум на 2 занятия. На последующие занятия можно записаться через администратора.
@@ -85,10 +85,11 @@
             v-model="focus"
             locale="ru"
             :weekdays="weekday"
+            :start="today"
             :type="type"
             :events="events"
             @click:date="viewDay"
-            @mousedown:time="register"
+            @mousedown:time="addEvent"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
             first-time="08:00"
@@ -97,10 +98,8 @@
             :interval-format="intervalFormatter"
         >
           <template v-slot:event="{ event }">
-            <div class="v-event-draggable">
-              <strong>{{ event.name }}</strong>
-              {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
-            </div>
+            <strong>{{ event.name }}</strong>
+            {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
           </template>
         </v-calendar>
       </v-stepper-content>
@@ -117,8 +116,19 @@ import dayjs from 'dayjs'
 export default {
   name: 'Main',
   computed: {
+    today() {
+      return dayjs().format('YYYY-MM-DD')
+    },
     availableSumForDriving() {
-      return (this.user.course.driving.class - 4) * this.user.course.driving.cost
+      return (this.user.course.driving.class - 4) * this.user.course.driving.cost - this.allUserDrivingsSum
+    },
+    allUserDrivingsSum() {
+      const driving = this.user.payments.filter((p) => {
+        return p.type === '622f0b6c86788d850dc496f4' // тип вождение
+      })
+      return driving.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
     },
     filteredInstructors() {
       return this.$store.getters.instructors.filter((i) => {
@@ -130,7 +140,7 @@ export default {
     },
     events() {
       const events = this.$store.getters.events.filter((e) => {
-        return e.instructor === this.record.instructor._id
+        return e.instructor._id === this.record.instructor._id || e.instructor === this.record.instructor._id
       })
       events.forEach((e) => {
         e.name = e.type.name
@@ -161,7 +171,7 @@ export default {
       week: 'Неделя',
       day: 'День',
     },
-    type: 'month',
+    type: 'week',
     types: [
       {text: 'День', value: 'day'},
       {text: 'Неделя', value: 'week'},
@@ -178,8 +188,9 @@ export default {
     extendOriginal: null,
   }),
   methods: {
-    async addNewEvent() {
+    async register() {
       await this.$store.dispatch('addNewEvents', this.newEvents)
+      await this.$store.dispatch('updateUser')
       this.newEvents.forEach((e) => {
         const date = dayjs(e.start).format('DD.MM.YYYY')
         const timeStart = dayjs(e.start).format('HH:mm')
@@ -188,15 +199,44 @@ export default {
       })
       this.newEvents = []
     },
-    register (tms) {
+    addPayment(event) {
+      const payload = {
+        date: dayjs(event.start).format('x'),
+        sum: event.cost,
+        type: this.$store.getters.paymentTypes.find((t) => {
+          return t.name === 'Вождение'
+        })._id,
+        comment: '',
+      }
+      this.$store.commit('addPayment', payload)
+    },
+    addEvent(tms) {
       const mouse = this.toTime(tms)
-      const eventIndex = this.newEvents.findIndex((e) => {
+      const eventIndex = this.events.findIndex((e) => {
         return e.start === this.roundTime(mouse)
       })
+
       if (eventIndex > -1) {
-        this.newEvents.splice(eventIndex, 1)
-        this.$store.commit('removeEvent', eventIndex)
-        return
+        const oldEvent = this.events[eventIndex]
+        if (oldEvent.name === 'Занято') {
+          if (oldEvent.student._id === this.user._id) {
+            if (!dayjs(oldEvent.start).diff(dayjs(), 'd') > 0) {
+              this.$toast.error('Нельзя отписаться менее чем за сутки')
+              return
+            } else {
+              if (confirm(`Вы уверены что хотите отписаться от занятия?`)) {
+                this.newEvents.splice(eventIndex, 1)
+                this.$store.dispatch('removeEvent', oldEvent._id)
+                this.$store.commit('removePayment', oldEvent.start)
+                this.$store.dispatch('updateUser')
+              }
+              return
+            }
+          } else {
+            this.$toast.warning('Данное время занято другим человеком')
+            return
+          }
+        }
       }
       if (this.newEvents.length >= 2) {
         this.$toast.error('Записаться можно не больше чем на 2 занятия в сутки')
@@ -215,12 +255,11 @@ export default {
         timed: true,
         status: '623190b8926bff909550602c'
       }
-
       this.newEvents.push(event)
-
       this.$store.commit('addEvent', event)
+      this.addPayment(event)
     },
-    roundTime (time, down = true) {
+    roundTime(time, down = true) {
       const roundTo = 90 // minutes
       const roundDownTime = roundTo * 60 * 1000
 
@@ -228,7 +267,7 @@ export default {
           ? time - time % roundDownTime
           : time + (roundDownTime - (time % roundDownTime))
     },
-    toTime (tms) {
+    toTime(tms) {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime()
     },
     viewDay({date}) {
@@ -236,7 +275,7 @@ export default {
         this.focus = date
         this.type = 'day'
       } else {
-        this.$toast.warning(`Выберите дату после ${date}`)
+        this.$toast.warning(`Выберите дату после ${dayjs(date).format('DD.MM.YYYY')}`)
       }
     },
     selectInstructor(instructor) {

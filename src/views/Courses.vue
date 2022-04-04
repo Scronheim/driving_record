@@ -110,6 +110,7 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
+                    <v-btn text x-large block color="yellow">Механика</v-btn>
                     <v-card v-for="course in manualCourses" :key="course._id" class="ma-3">
                       <v-card-title>{{ course.name }}</v-card-title>
                       <v-card-text>
@@ -120,18 +121,10 @@
                             </v-list-item-icon>
                             <v-list-item-title>{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
-                          <v-list-item>
-                            <v-list-item-icon>
-                              <v-icon>mdi-human-male-board</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-title>{{ course.theory.class }}р</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-icon>
-                              <v-icon>mdi-laptop</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-title>{{ course.theory.online }}р</v-list-item-title>
-                          </v-list-item>
+                          <v-radio-group row v-model="courseInClass">
+                            <v-radio label="Класс" :value="true"/>
+                            <v-radio label="Онлайн" :value="false"/>
+                          </v-radio-group>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
@@ -140,9 +133,16 @@
                           </v-list-item>
                         </v-list>
                       </v-card-text>
+                      <v-card-actions>
+                        <v-spacer/>
+                        <v-btn text color="success"
+                               :disabled="$store.getters.userHasCourse"
+                               @click="chooseCourse(course)">Выбрать</v-btn>
+                      </v-card-actions>
                     </v-card>
                   </v-col>
                   <v-col>
+                    <v-btn text x-large block color="yellow">Автомат</v-btn>
                     <v-card v-for="course in autoCourses" :key="course._id" class="ma-3">
                       <v-card-title>{{ course.name }}</v-card-title>
                       <v-card-text>
@@ -153,18 +153,10 @@
                             </v-list-item-icon>
                             <v-list-item-title>{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
-                          <v-list-item>
-                            <v-list-item-icon>
-                              <v-icon>mdi-human-male-board</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-title>{{ course.theory.class }}р</v-list-item-title>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-icon>
-                              <v-icon>mdi-laptop</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-title>{{ course.theory.online }}р</v-list-item-title>
-                          </v-list-item>
+                          <v-radio-group row v-model="courseInClass">
+                            <v-radio label="Класс" :value="true"/>
+                            <v-radio label="Онлайн" :value="false"/>
+                          </v-radio-group>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
@@ -173,6 +165,12 @@
                           </v-list-item>
                         </v-list>
                       </v-card-text>
+                      <v-card-actions>
+                        <v-spacer/>
+                        <v-btn text color="success"
+                               :disabled="$store.getters.userHasCourse"
+                               @click="chooseCourse(course)">Выбрать</v-btn>
+                      </v-card-actions>
                     </v-card>
                   </v-col>
                 </v-row>
@@ -258,6 +256,45 @@ export default {
     labels: [15, 20, 25, 30],
   }),
   methods: {
+    async chooseCourse(item) {
+      const theoryCost = () => {
+        if (item.driving.classes === 30 || item.driving.classes === 15) {
+          if (this.courseInClass) {
+            return 3900
+          } else {
+            return 2500
+          }
+        } else if (item.driving.classes === 25 || item.driving.classes === 20) {
+          if (this.courseInClass) {
+            return 4900
+          } else {
+            return 3500
+          }
+        }
+      }
+      const oneDrivingCost = () => {
+        if (item.transmission === 'Механика') {
+          return 900
+        }
+        return 1000
+      }
+      const course = {
+        transmission: item.transmission,
+        driving: {
+          class: item.driving.classes,
+          cost: oneDrivingCost()
+        },
+        theory: {
+          place: this.courseInClass ? 'Класс': 'Онлайн',
+          cost: theoryCost()
+        },
+        additionalDrivingCost: item.additionalDrivingCost,
+        cost: (item.driving.classes * item.driving.cost) + theoryCost()
+      }
+      this.$store.commit('setCourseToUser', course)
+      await this.$store.dispatch('updateUser')
+      this.$toast.success('Курс успешно выбран')
+    },
     async selectCourse() {
       const course = {
         transmission: this.manualTransmission ? 'Механика': 'Автомат',
@@ -272,11 +309,9 @@ export default {
         },
         additionalDrivingCost: this.additionalDrivingCost
       }
-      if (course) {
-        this.$store.commit('setCourseToUser', course)
-        await this.$store.dispatch('updateUser')
-        this.$toast.success('Курс успешно выбран')
-      }
+      this.$store.commit('setCourseToUser', course)
+      await this.$store.dispatch('updateUser')
+      this.$toast.success('Курс успешно выбран')
     }
   }
 }

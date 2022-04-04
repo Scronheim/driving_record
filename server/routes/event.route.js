@@ -11,6 +11,7 @@ module.exports = function(app) {
   })
   app.get('/api/events', controller.getEvents)
   app.post('/api/events', controller.addEvent)
+  app.delete('/api/events', [authJwt.verifyToken], controller.removeEvent)
   app.get('/api/event_types', controller.getEventTypes)
   app.get('/api/event_statuses', controller.getEventStatuses)
 }

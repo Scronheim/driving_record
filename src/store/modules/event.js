@@ -22,8 +22,23 @@ const eventModule = {
     removeEvent(state, eventIndex) {
       state.events.splice(eventIndex, 1)
     },
+    removeEventById(state, eventId) {
+      const eventIndex = state.events.findIndex((e) => {
+        return e._id === eventId
+      })
+      state.events.splice(eventIndex, 1)
+    },
   },
   actions: {
+    async removeEvent({rootState, dispatch}, eventId) {
+      await axios.delete(`${rootState.apiUrl}/events`, {
+        headers: {},
+        data: {
+          id: eventId
+        }
+      })
+      dispatch('getEvents')
+    },
     async getEvents({commit, rootState}) {
       const {data} = await axios.get(`${rootState.apiUrl}/events`)
       commit('setEvents', data.data)

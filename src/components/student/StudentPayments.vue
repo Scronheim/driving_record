@@ -27,7 +27,7 @@
     </template>
     <template v-slot:item.sum="{item}">{{ item.sum }}р.</template>
     <template v-slot:item.type="{item}">
-      <v-edit-dialog
+      <v-edit-dialog v-if="$store.getters.isAdmin"
           @save="updateStudent"
           :return-value.sync="item.type"
       >
@@ -42,9 +42,12 @@
           />
         </template>
       </v-edit-dialog>
+      <template v-else>
+        {{ item.type | paymentType }}
+      </template>
     </template>
     <template v-slot:item.comment="{item}">
-      <v-edit-dialog
+      <v-edit-dialog v-if="$store.getters.isAdmin"
           @save="updateStudent"
           :return-value.sync="item.comment"
       >
@@ -53,8 +56,11 @@
           <v-text-field dense solo-inverted v-model="item.comment"/>
         </template>
       </v-edit-dialog>
+      <template v-else>
+        {{ item.comment }}
+      </template>
     </template>
-    <template v-slot:item.actions="{item}">
+    <template v-slot:item.actions="{item}" v-if="$store.getters.isAdmin">
       <v-btn icon color="error" @click="removePayment(item)">
         <v-icon v-text="'mdi-delete'"/>
       </v-btn>
@@ -83,7 +89,12 @@ export default {
       return this.student.course.theory.cost
     },
     totalDriving() {
-      return (this.student.course.driving.class - 4) * this.student.course.driving.cost
+      const driving = this.student.payments.filter((p) => {
+        return p.type === '622f0b6c86788d850dc496f4' // тип вождение
+      })
+      return driving.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
     },
     totalAdditionalDriving() {
       return 0

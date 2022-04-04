@@ -26,6 +26,15 @@ const userModule = {
     paymentTypes: [],
   }),
   mutations: {
+    removePayment(state, eventStart) {
+      const paymentIndex = state.user.payments.findIndex((p) => {
+        return p.date === eventStart
+      })
+      state.user.payments.splice(paymentIndex, 1)
+    },
+    addPayment(state, payload) {
+      state.user.payments.push(payload)
+    },
     setCourseToUser(state, course) {
       state.user.course = course
     },

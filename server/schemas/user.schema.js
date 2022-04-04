@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
     payments: [
       {
         date: {
-          type: Date,
+          type: Number, // timestamp
         },
         type: {
           type: mongoose.Types.ObjectId,
