@@ -8,6 +8,41 @@
     <template v-slot:top>
       <v-row>
         <v-col>
+          <v-menu
+              :close-on-content-click="false"
+              :nudge-width="200"
+              offset-x
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon
+                     color="indigo"
+                     v-bind="attrs"
+                     v-on="on"
+              >
+                <v-icon>mdi-help-circle</v-icon>
+              </v-btn>
+            </template>
+
+            <v-card>
+              <v-list dense>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-btn small color="primary">Запланировано</v-btn>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-btn small color="success">Завершено</v-btn>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-btn small color="orange lighten-3">Неявка</v-btn>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
           <b>Всего занятий:</b> {{ totalEvents }}
         </v-col>
         <v-col>
@@ -29,9 +64,6 @@
     </template>
     <template v-slot:item.cost="{item}">
       {{ item.cost }}р.
-    </template>
-    <template v-slot:item.status="{item}">
-      {{ item.status.name }}
     </template>
     <template v-slot:item.instructor="{item}">
       {{ item.instructor.name }}
@@ -87,7 +119,6 @@ export default {
       {text: 'Дата занятия', align: 'start', sortable: true, value: 'date'},
       {text: 'Время', align: 'start', sortable: false, value: 'time'},
       {text: 'Сумма', align: 'start', sortable: false, value: 'cost'},
-      {text: 'Статус', align: 'start', sortable: true, value: 'status'},
       {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
       {text: 'Действия', align: 'start', sortable: false, value: 'actions'},
     ],
@@ -103,15 +134,12 @@ export default {
       }
     },
     rowClass(item) {
-      switch (item.status._id) {
-        case '623190b8926bff909550602c': // Запланировано
-          return 'primary'
-        case '623190ca926bff909550602d': // В процессе
-          return 'orange'
-        case '623190de926bff909550602e': // Завершено
-          return 'success'
-        case '623190e8926bff909550602f': // Неявка
-          return 'error'
+      if (item.status.name === 'Неявка') {
+        return 'orange lighten-3'
+      } else if (dayjs(item.start).isAfter(dayjs())) {
+        return 'primary'
+      } else {
+        return 'success'
       }
     },
   }

@@ -32,7 +32,7 @@
     <Dialog v-model="newPaymentDialog" title="Добавление платежа">
       <template v-slot:body>
         <v-date-picker locale="ru" show-week show-adjacent-months no-title class="ma-1" v-model="newPayment.date"/>
-        <v-text-field dense solo-inverted hide-details label="Сумма" class="ma-1" v-model="newPayment.sum" append-icon="mdi-currency-rub"/>
+        <v-text-field dense solo-inverted hide-details label="Сумма" class="ma-1" type="number" v-model.number="newPayment.sum" append-icon="mdi-currency-rub"/>
         <v-select dense solo-inverted hide-details label="Тип" class="ma-1" v-model="newPayment.type"
                   :items="$store.getters.paymentTypes"
                   item-text="name"
@@ -52,6 +52,7 @@ import Dialog from '@/components/Dialog'
 import StudentInfo from '@/components/student/StudentInfo'
 import StudentEvents from '@/components/student/StudentEvents'
 import StudentPayments from '@/components/student/StudentPayments'
+import dayjs from "dayjs";
 export default {
   name: 'StudentProfile',
   components: {Dialog, StudentInfo, StudentEvents, StudentPayments},
@@ -92,7 +93,9 @@ export default {
       this.$toast.success(`Ученик обновлён`)
     },
     async addPayment() {
-      this.student.payments.push(this.newPayment)
+      const payment = Object.assign({}, this.newPayment)
+      payment.date = dayjs(payment.date).format('x')
+      this.student.payments.push(payment)
       await this.$store.dispatch('updateUser', this.student)
       this.$toast.success(`Платёж добавлен`)
     }

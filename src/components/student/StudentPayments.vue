@@ -97,7 +97,12 @@ export default {
       }, 0)
     },
     totalAdditionalDriving() {
-      return 0
+      const driving = this.student.payments.filter((p) => {
+        return p.type === '622f0b7586788d850dc496f5' // тип доп. вождение
+      })
+      return driving.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
     },
     totalExam() {
       return this.student.course.driving.cost * 4
