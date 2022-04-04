@@ -9,14 +9,14 @@
         </template>
         <span>{{ drawer ? 'Закрыть': 'Открыть' }} меню</span>
       </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon @click="back" v-if="!isMobile" v-on="on" v-bind="attrs">
-            <v-icon v-text="'mdi-arrow-left'"/>
-          </v-btn>
-        </template>
-        <span>Назад</span>
-      </v-tooltip>
+<!--      <v-tooltip bottom>-->
+<!--        <template v-slot:activator="{ on, attrs }">-->
+<!--          <v-btn icon @click="back" v-if="!isMobile" v-on="on" v-bind="attrs">-->
+<!--            <v-icon v-text="'mdi-arrow-left'"/>-->
+<!--          </v-btn>-->
+<!--        </template>-->
+<!--        <span>Назад</span>-->
+<!--      </v-tooltip>-->
 
       <div class="d-flex align-center">
         <v-img

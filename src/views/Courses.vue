@@ -138,6 +138,10 @@
                         <v-btn text color="success"
                                :disabled="$store.getters.userHasCourse"
                                @click="chooseCourse(course)">Выбрать</v-btn>
+                        <v-btn text color="primary"
+                               v-if="$store.getters.isAdmin"
+                               @click="showCourseDialog(course)"
+                        >Редактировать</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-col>
@@ -170,6 +174,10 @@
                         <v-btn text color="success"
                                :disabled="$store.getters.userHasCourse"
                                @click="chooseCourse(course)">Выбрать</v-btn>
+                        <v-btn text color="primary"
+                               v-if="$store.getters.isAdmin"
+                               @click="showCourseDialog(course)"
+                        >Редактировать</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-col>
@@ -180,16 +188,50 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <Dialog v-model="courseEditDialog" title="Редактирование курса">
+      <template #body>
+        <v-text-field dense hide-details label="Название курса" v-model="currentCourse.name"/>
+        <v-switch dense :label="currentCourse.transmission === 'Механика' ? 'Механика': 'Автомат'"
+                  true-value="Механика" false-value="Автомат" v-model="currentCourse.transmission"/>
+        <v-text-field dense label="Количество занятий по вождению" type="number"
+                      v-model.number="currentCourse.driving.classes"/>
+        <v-text-field dense label="Цена за 1 вождение" type="number"
+                      v-model.number="currentCourse.driving.cost" append-outer-icon="mdi-currency-rub"/>
+        <v-text-field dense label="Цена за доп. вождение" type="number"
+                      v-model.number="currentCourse.additionalDriving" append-outer-icon="mdi-currency-rub"/>
+        <v-text-field dense label="Цена занятий в классе" type="number"
+                      v-model.number="currentCourse.theory.class" append-outer-icon="mdi-currency-rub"/>
+        <v-text-field dense label="Цена занятий в онлайне" type="number"
+                      v-model.number="currentCourse.theory.online" append-outer-icon="mdi-currency-rub"/>
+        <v-text-field dense label="Скидка на теорию" type="number"
+                      v-model.number="currentCourse.theory.discount" append-outer-icon="mdi-currency-rub"/>
+        <v-checkbox dense label="Нужно в/у" v-model="currentCourse.license"/>
+        Мин: <v-btn text color="yellow">{{ currentCourseMinCost }}р</v-btn>
+        Макс: <v-btn text color="yellow">{{ currentCourseMaxCost }}р</v-btn>
+      </template>
+      <template #actions>
+        <v-btn text color="success" @click="updateCourse">Сохранить</v-btn>
+      </template>
+    </Dialog>
   </v-container>
 </template>
 
 <script>
+import Dialog from '@/components/Dialog'
 export default {
   name: "Courses",
+  components: {Dialog},
   mounted() {
     this.$store.dispatch('getCourses')
   },
   computed: {
+    currentCourseMaxCost() {
+      return (this.currentCourse.driving.classes * this.currentCourse.driving.cost) + (this.currentCourse.theory.class - this.currentCourse.theory.discount)
+    },
+    currentCourseMinCost() {
+      return (this.currentCourse.driving.classes * this.currentCourse.driving.cost) + (this.currentCourse.theory.online - this.currentCourse.theory.discount)
+    },
     manualCourses() {
       return this.$store.getters.courses.filter((c) => {
         return c.transmission === 'Механика'
@@ -249,13 +291,28 @@ export default {
     },
   },
   data: () => ({
-    tab: 0,
+    currentCourse: {
+      transmission: 'Механика',
+      driving: {},
+      theory: {},
+    },
+    courseEditDialog: false,
+    tab: 1,
     courseInClass: true,
     manualTransmission: true,
     drivingCount: 3,
     labels: [15, 20, 25, 30],
   }),
   methods: {
+    async updateCourse() {
+      await this.$store.dispatch('updateCourse', this.currentCourse)
+      this.courseEditDialog = false
+      this.$toast.success(`Курс обновлён`)
+    },
+    showCourseDialog(course) {
+      Object.assign(this.currentCourse, course)
+      this.courseEditDialog = true
+    },
     async chooseCourse(item) {
       const theoryCost = () => {
         if (item.driving.classes === 30 || item.driving.classes === 15) {

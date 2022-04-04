@@ -19,7 +19,7 @@ exports.insertSchool = async (req, res) => {
   return jsonResponse(res, school)
 }
 
-exports.updateSchool = async (req, res) => {
+exports.updateCourse = async (req, res) => {
   const school = await Course.findByIdAndUpdate(req.body._id, req.body, {new: true})
   return jsonResponse(res, school)
 }

@@ -11,6 +11,6 @@ module.exports = function(app) {
   })
   app.get('/api/courses', controller.getCourses)
   // app.post('/api/schools', controller.insertSchool)
-  // app.patch('/api/schools', controller.updateSchool)
+  app.patch('/api/courses', [authJwt.verifyToken, authJwt.isAdmin], controller.updateCourse)
   // app.get('/api/groups', controller.getGroups)
 }
