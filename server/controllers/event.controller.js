@@ -7,6 +7,11 @@ const EventStatus = db.eventStatus
 
 const ObjectId = mongoose.Types.ObjectId
 
+exports.updateEvent = async (req, res) => {
+  const event = await Event.findByIdAndUpdate(req.body._id, req.body, {new: true})
+  return jsonResponse(res, event)
+}
+
 exports.removeEvent = async (req, res) => {
   await Event.findOneAndDelete(req.body.id)
   return jsonResponse(res, null, null, true, 200)

@@ -45,6 +45,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "Student page" */ '../views/students/StudentProfile')
   },
   {
+    path: '/events/:id',
+    name: 'Event page',
+    component: () => import(/* webpackChunkName: "Event page" */ '../views/events/EventProfile')
+  },
+  {
     path: '/admin',
     name: 'Admin page',
     component: () => import(/* webpackChunkName: "Admin page" */ '../views/Admin')

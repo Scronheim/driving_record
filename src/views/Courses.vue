@@ -297,7 +297,7 @@ export default {
       theory: {},
     },
     courseEditDialog: false,
-    tab: 1,
+    tab: 0,
     courseInClass: true,
     manualTransmission: true,
     drivingCount: 3,

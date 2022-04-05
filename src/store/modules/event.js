@@ -30,6 +30,10 @@ const eventModule = {
     },
   },
   actions: {
+    async updateEvent({rootState, dispatch}, payload) {
+      await axios.patch(`${rootState.apiUrl}/events`, payload)
+      dispatch('getEvents')
+    },
     async removeEvent({rootState, dispatch}, eventId) {
       await axios.delete(`${rootState.apiUrl}/events`, {
         headers: {},

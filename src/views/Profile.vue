@@ -9,7 +9,7 @@
               <v-list-item title="Email">
                 <v-tooltip top>
                   <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
+                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
                       <v-icon>mdi-at</v-icon>
                     </v-list-item-icon>
                   </template>
@@ -21,40 +21,42 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item title="Адрес школы" v-if="!$store.getters.isAdmin">
-                <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
-                      <v-icon>mdi-domain</v-icon>
-                    </v-list-item-icon>
-                  </template>
-                  <span>Адрес школы</span>
-                </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.school.address }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item title="Группа" v-if="!$store.getters.isAdmin">
-                <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
-                      <v-icon>mdi-account-group</v-icon>
-                    </v-list-item-icon>
-                  </template>
-                  <span>Группа</span>
-                </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.group.name }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <template v-if="$store.getters.isStudent">
+                <v-list-item title="Адрес школы">
+                  <v-tooltip top>
+                    <template v-slot:activator="{on, attrs}">
+                      <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
+                        <v-icon>mdi-domain</v-icon>
+                      </v-list-item-icon>
+                    </template>
+                    <span>Адрес школы</span>
+                  </v-tooltip>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-btn text small>{{ user.school.address }}</v-btn>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item title="Группа">
+                  <v-tooltip top>
+                    <template v-slot:activator="{on, attrs}">
+                      <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
+                        <v-icon>mdi-account-group</v-icon>
+                      </v-list-item-icon>
+                    </template>
+                    <span>Группа</span>
+                  </v-tooltip>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-btn text small>{{ user.group.name }}</v-btn>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
               <v-list-item title="Роль">
                 <v-tooltip top>
                   <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
+                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
                       <v-icon>mdi-account</v-icon>
                     </v-list-item-icon>
                   </template>
@@ -69,7 +71,7 @@
               <v-list-item title="Телефон">
                 <v-tooltip top>
                   <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
+                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
                       <v-icon>mdi-phone</v-icon>
                     </v-list-item-icon>
                   </template>
@@ -84,7 +86,7 @@
               <v-list-item title="Дата регистрации">
                 <v-tooltip top>
                   <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon v-on="on" v-bind="attrs">
+                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
                       <v-icon>mdi-clock</v-icon>
                     </v-list-item-icon>
                   </template>
@@ -100,7 +102,7 @@
             <v-btn text color="yellow" v-if="$store.getters.userHasCourse" @click="courseDialog = true">
               Выбранный курс
             </v-btn>
-            <v-btn text color="success" @click="$router.push('/')">
+            <v-btn text color="success" v-if="$store.getters.isStudent" @click="$router.push('/')">
               Записаться на вождение
             </v-btn>
             <v-btn text color="primary" @click="changePasswordDialog = true">
@@ -109,12 +111,17 @@
           </v-col>
           <template v-if="$store.getters.isStudent">
             <v-col>
-              <StudentEvents :student-events="$store.getters.userEvents"/>
+              <StudentEvents :student-events="$store.getters.studentEvents"/>
             </v-col>
             <v-col>
               <StudentPayments
                   :student="user"
-                  :student-payments="$store.getters.userPayments"/>
+                  :student-payments="$store.getters.studentPayments"/>
+            </v-col>
+          </template>
+          <template v-else-if="$store.getters.isInstructor">
+            <v-col>
+              <StudentEvents :student-events="$store.getters.instructorEvents"/>
             </v-col>
           </template>
         </v-row>

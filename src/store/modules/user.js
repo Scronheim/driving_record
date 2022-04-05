@@ -145,12 +145,17 @@ const userModule = {
     token: state => state.token,
     paymentTypes: state => state.paymentTypes,
     user: state => state.user,
-    userEvents: function (state, getters, rootState, rootGetters) {
+    studentEvents: function (state, getters, rootState, rootGetters) {
       return rootGetters.events.filter((e) => {
         return e.student._id === state.user._id
       })
     },
-    userPayments: state => state.user.payments,
+    instructorEvents: function (state, getters, rootState, rootGetters) {
+      return rootGetters.events.filter((e) => {
+        return e.instructor._id === state.user._id
+      })
+    },
+    studentPayments: state => state.user.payments,
     users: state => state.users,
     instructors: function (state) {
       return state.users.filter((u) => {
