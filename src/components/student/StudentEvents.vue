@@ -66,7 +66,7 @@
       <template v-slot:item.status="{item}">
         {{ item.status.name }}
       </template>
-      <template v-slot:item.actions="{item}">
+      <template v-slot:item.actions="{item}" v-if="$store.getters.isAdmin">
         <v-tooltip top>
           <template v-slot:activator="{on, attrs}">
             <v-btn icon color="error" v-on="on" v-bind="attrs"
@@ -145,7 +145,7 @@ export default {
       {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
       {text: 'Ученик', align: 'start', sortable: true, value: 'student'},
       {text: 'Статус', align: 'start', sortable: true, value: 'status'},
-      {text: 'Действия', align: 'start', sortable: false, value: 'actions'},
+      {text: 'Действия', align: 'start', sortable: false, value: 'actions', visible: false,},
     ],
   }),
   methods: {
@@ -165,7 +165,7 @@ export default {
       })
     },
     removeEventButtonIsDisabled(event) {
-      return !dayjs(event.start).diff(dayjs(), 'd') > 0
+      return !dayjs(event.start).diff(dayjs(), 'd') >= 0
     },
     removeEvent(event) {
       const startDate = dayjs(event.start).format('DD.MM.YYYY HH:mm')
