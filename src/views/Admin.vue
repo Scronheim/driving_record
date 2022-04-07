@@ -289,7 +289,7 @@ export default {
     newSchoolDialog: false,
     newGroupDialog: false,
     carInfoDialog: false,
-    tab: 2,
+    tab: 0,
   }),
   methods: {
     saveCarInfo() {

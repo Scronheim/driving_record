@@ -34,7 +34,7 @@ export default {
   components: {LoginForm},
   data: () => ({
     menu: [
-      {text: 'Онлайн запись', to: '/', icon: 'mdi-pen-plus', allowedRoles: ['Ученик', 'Администратор']},
+      {text: 'Запись на вождение', to: '/', icon: 'mdi-pen-plus', allowedRoles: ['Ученик', 'Администратор']},
       {text: 'Профиль', to: '/profile', icon: 'mdi-account', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},
       {text: 'Курсы', to: '/courses', icon: 'mdi-steering', allowedRoles: ['Ученик', 'Администратор']},
       // {text: 'Сообщения', to: '/messages', icon: 'mdi-message', allowedRoles: ['Ученик', 'Инструктор', 'Администратор']},

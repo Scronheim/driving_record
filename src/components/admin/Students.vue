@@ -26,7 +26,7 @@
             @save="updateStudent(item)"
             :return-value.sync="item.email"
         >
-          {{ item.email }}
+          <v-btn text link small :href="`mailto:${item.email}`">{{ item.email }}</v-btn>
           <template v-slot:input>
             <v-text-field dense solo-inverted v-model="item.email" />
           </template>
@@ -37,7 +37,7 @@
             @save="updateStudent(item)"
             :return-value.sync="item.phone"
         >
-          {{ item.phone }}
+          <v-btn text link small :href="`tel:${item.phone}`">{{ item.phone }}</v-btn>
           <template v-slot:input>
             <v-text-field dense solo-inverted v-model="item.phone" />
           </template>
