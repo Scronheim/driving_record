@@ -11,19 +11,13 @@
                   <v-list-item-icon>
                     <v-icon v-text="'mdi-account-group'"/>
                   </v-list-item-icon>
-                  <v-list-item-title>{{ group.students.length }} человек</v-list-item-title>
+                  <v-list-item-title>{{ groupStudentsCount(group) }} человек</v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item title="Дата начала">
                   <v-list-item-icon>
                     <v-icon v-text="'mdi-clock-start'"/>
                   </v-list-item-icon>
-                  <v-list-item-title>{{ group.createdAt | humanDate }}</v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon v-text="'mdi-clock-end'"/>
-                  </v-list-item-icon>
-                  <v-list-item-title>{{ group.endedAt | humanDate }}</v-list-item-title>
+                  <v-list-item-title>{{ group.start | humanDate }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -40,25 +34,24 @@
 <script>
 export default {
   name: "SchoolProfile",
-  watch: {
-    '$store.getters.schools': function () {
-      const school = this.$store.getters.schools.find((s) => {
-        return s._id === this.$route.params.id
-      })
-      this.groups = school.groups
-    }
-  },
   computed: {
     chunkedGroups() {
       const groups = this.$store.getters.groups.filter((g) => {
         return g.school._id === this.$route.params.id
       })
-      return this.$_.chunk(groups, 3)
+      return this.$_.chunk(groups, 4)
     }
   },
   data: () => ({
-    groups: [],
-  })
+
+  }),
+  methods: {
+    groupStudentsCount(group) {
+      return this.$store.getters.users.filter((u) => {
+        return u.group === group._id
+      }).length
+    },
+  }
 }
 </script>
 

@@ -6,7 +6,8 @@
           <v-card-title>{{ school.address }}</v-card-title>
           <v-card-text>
             Количество учащихся:
-            <v-btn text small color="primary">{{ school.studentsCount }}</v-btn>
+            <v-btn text small outlined color="primary">{{ school.studentsCount }}</v-btn>
+            в <v-btn text small outlined color="primary">{{ school.groupsCount }}</v-btn> группах
           </v-card-text>
         </v-card>
       </v-col>
@@ -24,7 +25,11 @@ export default {
         const students = this.$store.getters.students.filter((user) => {
           return user.school._id === school._id
         })
+        const groups = this.$store.getters.groups.filter((group) => {
+          return group.school._id === school._id
+        })
         school.studentsCount = students.length
+        school.groupsCount = groups.length
       })
       return this.$_.chunk(schools, 3)
     }

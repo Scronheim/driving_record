@@ -63,14 +63,6 @@ async function getGroups() {
   return Group.aggregate([
     {
       $lookup: {
-        from: 'users',
-        localField: 'students',
-        foreignField: '_id',
-        as: 'students'
-      }
-    },
-    {
-      $lookup: {
         from: 'schools',
         localField: 'school',
         foreignField: '_id',
