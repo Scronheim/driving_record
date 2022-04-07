@@ -181,8 +181,10 @@
 </template>
 
 <script>
+import Dialog from '@/components/Dialog'
 export default {
   name: "Instructors",
+  components: {Dialog},
   computed: {
     instructors() {
       return this.$store.getters.instructors

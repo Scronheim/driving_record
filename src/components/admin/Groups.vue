@@ -100,9 +100,11 @@
 
 <script>
 import dayjs from 'dayjs'
+import Dialog from '@/components/Dialog'
 
 export default {
   name: "Schools",
+  components: {Dialog},
   computed: {
     groups() {
       return this.$store.getters.groups

@@ -45,8 +45,11 @@
 </template>
 
 <script>
+import Dialog from '@/components/Dialog'
+
 export default {
   name: "Schools",
+  components: {Dialog},
   computed: {
     schools() {
       return this.$store.getters.schools
