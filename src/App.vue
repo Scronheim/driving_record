@@ -29,7 +29,7 @@
       </div>
 
       <v-spacer/>
-      <v-btn text to="/profile">
+      <v-btn text to="/profile" v-if="!$vuetify.breakpoint.mobile">
         <v-icon>mdi-account</v-icon>
         {{ user.name }}
       </v-btn>

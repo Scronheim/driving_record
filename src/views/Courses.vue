@@ -111,25 +111,29 @@
                 <v-row>
                   <v-col>
                     <v-btn text x-large block color="yellow">Механика</v-btn>
-                    <v-card v-for="course in manualCourses" :key="course._id" class="ma-3">
+                    <v-card elevation="10" v-for="course in manualCourses" :key="course._id" class="ma-3">
                       <v-card-title>{{ course.name }}</v-card-title>
                       <v-card-text>
-                        <v-list dense>
+                        <v-list>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-steering</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title>{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
+                            <v-list-item-title class="text-h5">{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
-                          <v-radio-group row v-model="courseInClass">
-                            <v-radio label="Класс" :value="true"/>
-                            <v-radio label="Онлайн" :value="false"/>
-                          </v-radio-group>
+                          <v-list-item>
+                            <v-list-item-icon>
+                              <v-icon>mdi-domain</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                              <v-select dense hide-details outlined label="Место проведения теории" :items="theoryPlaces" v-model="courseInClass"/>
+                            </v-list-item-content>
+                          </v-list-item>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title>{{ course.additionalDriving }}р</v-list-item-title>
+                            <v-list-item-title class="text-h5" title="Цена за доп. вождение">{{ course.additionalDriving }}р</v-list-item-title>
                           </v-list-item>
                         </v-list>
                       </v-card-text>
@@ -147,25 +151,29 @@
                   </v-col>
                   <v-col>
                     <v-btn text x-large block color="yellow">Автомат</v-btn>
-                    <v-card v-for="course in autoCourses" :key="course._id" class="ma-3">
+                    <v-card elevation="10" v-for="course in autoCourses" :key="course._id" class="ma-3">
                       <v-card-title>{{ course.name }}</v-card-title>
                       <v-card-text>
-                        <v-list dense>
+                        <v-list>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-steering</v-icon>
                             </v-list-item-icon>
                             <v-list-item-title>{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
-                          <v-radio-group row v-model="courseInClass">
-                            <v-radio label="Класс" :value="true"/>
-                            <v-radio label="Онлайн" :value="false"/>
-                          </v-radio-group>
+                          <v-list-item>
+                            <v-list-item-icon>
+                              <v-icon>mdi-domain</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                              <v-select dense hide-details outlined label="Место проведения теории" :items="theoryPlaces" v-model="courseInClass"/>
+                            </v-list-item-content>
+                          </v-list-item>
                           <v-list-item>
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title>{{ course.additionalDriving }}р</v-list-item-title>
+                            <v-list-item-title class="text-h5" title="Цена за доп. вождение">{{ course.additionalDriving }}р</v-list-item-title>
                           </v-list-item>
                         </v-list>
                       </v-card-text>
@@ -191,20 +199,20 @@
 
     <Dialog v-model="courseEditDialog" title="Редактирование курса">
       <template #body>
-        <v-text-field dense hide-details label="Название курса" v-model="currentCourse.name"/>
+        <v-text-field dense hide-details outlined label="Название курса" v-model="currentCourse.name"/>
         <v-switch dense :label="currentCourse.transmission === 'Механика' ? 'Механика': 'Автомат'"
                   true-value="Механика" false-value="Автомат" v-model="currentCourse.transmission"/>
-        <v-text-field dense label="Количество занятий по вождению" type="number"
+        <v-text-field dense outlined label="Количество занятий по вождению" type="number"
                       v-model.number="currentCourse.driving.classes"/>
-        <v-text-field dense label="Цена за 1 вождение" type="number"
+        <v-text-field dense outlined label="Цена за 1 вождение" type="number"
                       v-model.number="currentCourse.driving.cost" append-outer-icon="mdi-currency-rub"/>
-        <v-text-field dense label="Цена за доп. вождение" type="number"
+        <v-text-field dense outlined label="Цена за доп. вождение" type="number"
                       v-model.number="currentCourse.additionalDriving" append-outer-icon="mdi-currency-rub"/>
-        <v-text-field dense label="Цена занятий в классе" type="number"
+        <v-text-field dense outlined label="Цена занятий в классе" type="number"
                       v-model.number="currentCourse.theory.class" append-outer-icon="mdi-currency-rub"/>
-        <v-text-field dense label="Цена занятий в онлайне" type="number"
+        <v-text-field dense outlined label="Цена занятий в онлайне" type="number"
                       v-model.number="currentCourse.theory.online" append-outer-icon="mdi-currency-rub"/>
-        <v-text-field dense label="Скидка на теорию" type="number"
+        <v-text-field dense outlined label="Скидка на теорию" type="number"
                       v-model.number="currentCourse.theory.discount" append-outer-icon="mdi-currency-rub"/>
         <v-checkbox dense label="Нужно в/у" v-model="currentCourse.license"/>
         Мин: <v-btn text color="yellow">{{ currentCourseMinCost }}р</v-btn>
@@ -291,6 +299,10 @@ export default {
     },
   },
   data: () => ({
+    theoryPlaces: [
+      {text: 'Класс', value: true},
+      {text: 'Онлайн', value: false},
+    ],
     currentCourse: {
       transmission: 'Механика',
       driving: {},
@@ -343,7 +355,8 @@ export default {
         },
         theory: {
           place: this.courseInClass ? 'Класс': 'Онлайн',
-          cost: theoryCost()
+          cost: theoryCost(),
+          discount: 0,
         },
         additionalDrivingCost: item.additionalDrivingCost,
         cost: (item.driving.classes * item.driving.cost) + theoryCost()
@@ -353,7 +366,11 @@ export default {
       this.$toast.success('Курс успешно выбран')
     },
     async selectCourse() {
+      const existingCourse = this.$store.getters.courses.find((c) => {
+        return c.minCost === this.totalCost || c.maxCost === this.totalCost
+      })
       const course = {
+        name: existingCourse?.name || '',
         transmission: this.manualTransmission ? 'Механика': 'Автомат',
         cost: this.totalCost,
         driving: {
@@ -362,7 +379,8 @@ export default {
         },
         theory: {
           place: this.courseInClass ? 'Класс': 'Онлайн',
-          cost: this.theoryCost
+          cost: this.theoryCost,
+          discount: 0,
         },
         additionalDrivingCost: this.additionalDrivingCost
       }

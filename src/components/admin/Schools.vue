@@ -16,6 +16,11 @@
         </template>
       </v-edit-dialog>
     </template>
+    <template v-slot:item.actions="{item}">
+      <v-btn icon color="error" @click="removeSchool(item)">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </template>
   </v-data-table>
 </template>
 
@@ -31,9 +36,16 @@ export default {
     rowsPerPageItems: [15, 30, 50, 100, -1],
     schoolHeaders: [
       {text: 'Адрес', align: 'start', sortable: false, value: 'address'},
+      {text: 'Действия', align: 'start', sortable: false, value: 'actions'},
     ],
   }),
   methods: {
+    async removeSchool(school) {
+      if (confirm(`Вы действительно хотите удалить класс на ${school.address}?`)) {
+        await this.$store.dispatch('removeSchool', school._id)
+        this.$toast.success('Класс удалён')
+      }
+    },
     updateSchool(school) {
       this.$emit('updateSchool', school)
     }

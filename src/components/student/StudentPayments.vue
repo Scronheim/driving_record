@@ -6,7 +6,10 @@
     <template v-slot:top>
       <v-row>
         <v-col>
-          <b>Всего:</b> {{ totalAmount }}р.
+          <b>Стоимость курса:</b> {{ courseCost }}р.
+        </v-col>
+        <v-col>
+          <b>Фактически внесено:</b> {{ totalRealMoney }}р.
         </v-col>
         <v-col>
           <b>Теория:</b> {{ totalTheory }}р.
@@ -19,6 +22,9 @@
         </v-col>
         <v-col>
           <b>Экзамен:</b> {{ totalExam }}р.
+        </v-col>
+        <v-col>
+          <b>Остаток:</b> {{ balanceLeft }}р.
         </v-col>
       </v-row>
     </template>
@@ -82,11 +88,22 @@ export default {
     }
   },
   computed: {
-    totalAmount() {
+    balanceLeft() {
+      return this.totalRealMoney - this.totalExam - this.totalTheory - this.totalDriving - this.totalAdditionalDriving
+    },
+    courseCost() {
       return this.student.course.cost
     },
     totalTheory() {
-      return this.student.course.theory.cost
+      return this.student.course.theory.cost - this.student.course.theory.discount
+    },
+    totalRealMoney() {
+      const money = this.student.payments.filter((p) => {
+        return p.type === '624e693d1d606f93efc3e444' // тип фактический взнос денег
+      })
+      return money.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
     },
     totalDriving() {
       const driving = this.student.payments.filter((p) => {

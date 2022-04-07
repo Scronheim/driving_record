@@ -20,9 +20,25 @@ exports.insertSchool = async (req, res) => {
   return jsonResponse(res, school)
 }
 
+exports.removeSchool = async (req, res) => {
+  const school = await School.findByIdAndDelete(req.body.id)
+  return jsonResponse(res, school)
+}
+
 exports.updateSchool = async (req, res) => {
   const school = await School.findByIdAndUpdate(req.body._id, req.body, {new: true})
   return jsonResponse(res, school)
+}
+
+exports.insertGroup = async (req, res) => {
+  const group = new Group(req.body)
+  await group.save()
+  return jsonResponse(res, group)
+}
+
+exports.updateGroup = async (req, res) => {
+  const group = await Group.findByIdAndUpdate(req.body._id, req.body, {new: true})
+  return jsonResponse(res, group)
 }
 
 exports.getGroups = async (req, res) => {

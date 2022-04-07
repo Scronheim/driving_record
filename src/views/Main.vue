@@ -1,7 +1,19 @@
 <template>
   <v-container fluid>
+    <template v-if="$store.getters.userHasCourse">
+      <v-alert type="info" v-if="$store.getters.drivingIsAvailable">
+        Стоимость занятия {{ user.course.driving.cost }}р. Вам доступно {{ $store.getters.availableSumForDriving }}р
+      </v-alert>
+      <v-alert type="warning" v-else>
+        Доступная для вождения сумма ({{ $store.getters.availableSumForDriving }}р) меньше стоимости одного занятия ({{ user.course.driving.cost }}р).
+        Пополните пожалуйста счёт через администратора
+      </v-alert>
+    </template>
+    <v-alert type="warning" v-else-if="!$store.getters.userHasCourse && $store.getters.isLogin">
+      У Вас не выбран курс. Пожалуйста <router-link to="/courses">перейдите</router-link> на страницу с выбором курса
+    </v-alert>
     <v-stepper
-        v-if="$store.getters.isStudent"
+        v-if="$store.getters.isStudent && $store.getters.userHasCourse"
         v-model="currentStep"
         vertical
     >
@@ -13,9 +25,6 @@
       </v-stepper-step>
 
       <v-stepper-content step="1">
-        <v-alert type="info">
-          Стоимость занятия {{ user.course.driving.cost }}р. Вам доступно {{ availableSumForDriving }}р
-        </v-alert>
         <v-row v-for="(chunk, chunkIndex) in chunkedInstructors" :key="`chunk-${chunkIndex}`">
           <v-col v-for="(instructor, instructorIndex) in chunk" :key="`instructor-${instructorIndex}`">
             <v-card @click="selectInstructor(instructor)">
@@ -104,9 +113,6 @@
         </v-calendar>
       </v-stepper-content>
     </v-stepper>
-    <v-card v-else>
-      <v-card-title>Добро пожаловать в личный кабинет школы «Авто Зачёт»</v-card-title>
-    </v-card>
   </v-container>
 </template>
 
@@ -118,17 +124,6 @@ export default {
   computed: {
     today() {
       return dayjs().format('YYYY-MM-DD')
-    },
-    availableSumForDriving() {
-      return (this.user.course.driving.class - 4) * this.user.course.driving.cost - this.allUserDrivingsSum
-    },
-    allUserDrivingsSum() {
-      const driving = this.user.payments.filter((p) => {
-        return p.type === '622f0b6c86788d850dc496f4' // тип вождение
-      })
-      return driving.reduce((acc, value) => {
-        return acc + value.sum
-      }, 0)
     },
     filteredInstructors() {
       return this.$store.getters.instructors.filter((i) => {

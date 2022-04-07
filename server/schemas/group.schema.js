@@ -10,12 +10,9 @@ const groupSchema = new mongoose.Schema({
   start: {
     type: Number,
   },
-  end: {
-    type: Number,
-  },
-  students: {
-    type: Array,
-  },
+  closed: {
+    type: Boolean,
+  }
 }, {
   versionKey: false,
   timestamps: true,

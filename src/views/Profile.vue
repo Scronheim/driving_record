@@ -1,132 +1,34 @@
 <template>
   <v-container fluid>
-    <v-card>
-      <v-card-title>{{ user.name }}</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col :cols="$vuetify.breakpoint.mobile ? '' : 2">
-            <v-list dense>
-              <v-list-item title="Email">
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-img
+              height="150px"
+              src="https://cdn.pixabay.com/photo/2020/07/12/07/47/bee-5396362_1280.jpg"
+          >
+            <v-card-title class="mt-7">
+              <v-avatar size="56" color="primary">
+                {{ splittedUserName[0] }}{{ splittedUserName[1] }}
+              </v-avatar>
+              <p class="ml-3 mt-3">
+                {{ user.name }}
                 <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                      <v-icon>mdi-at</v-icon>
-                    </v-list-item-icon>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon color="success" v-on="on" @click="updateUser">
+                      <v-icon>mdi-content-save</v-icon>
+                    </v-btn>
                   </template>
-                  <span>Email</span>
+                  <span>Сохранить</span>
                 </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.email }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <template v-if="$store.getters.isStudent">
-                <v-list-item title="Адрес школы">
-                  <v-tooltip top>
-                    <template v-slot:activator="{on, attrs}">
-                      <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                        <v-icon>mdi-domain</v-icon>
-                      </v-list-item-icon>
-                    </template>
-                    <span>Адрес школы</span>
-                  </v-tooltip>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-btn text small>{{ user.school.address }}</v-btn>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item title="Группа">
-                  <v-tooltip top>
-                    <template v-slot:activator="{on, attrs}">
-                      <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                        <v-icon>mdi-account-group</v-icon>
-                      </v-list-item-icon>
-                    </template>
-                    <span>Группа</span>
-                  </v-tooltip>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-btn text small>{{ user.group.name }}</v-btn>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-              <v-list-item title="Роль">
-                <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                      <v-icon>mdi-account</v-icon>
-                    </v-list-item-icon>
-                  </template>
-                  <span>Роль</span>
-                </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.role.role }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item title="Телефон">
-                <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                      <v-icon>mdi-phone</v-icon>
-                    </v-list-item-icon>
-                  </template>
-                  <span>Телефон</span>
-                </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.phone }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item title="Дата регистрации">
-                <v-tooltip top>
-                  <template v-slot:activator="{on, attrs}">
-                    <v-list-item-icon class="mr-2" v-on="on" v-bind="attrs">
-                      <v-icon>mdi-clock</v-icon>
-                    </v-list-item-icon>
-                  </template>
-                  <span>Дата регистрации</span>
-                </v-tooltip>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <v-btn text small>{{ user.createdAt | humanDate }}</v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            <v-btn text color="yellow" v-if="$store.getters.userHasCourse" @click="courseDialog = true">
-              Выбранный курс
-            </v-btn>
-            <v-btn text color="success" v-if="$store.getters.isStudent" @click="$router.push('/')">
-              Записаться на вождение
-            </v-btn>
-            <v-btn text color="primary" @click="changePasswordDialog = true">
-              Сменить пароль
-            </v-btn>
-          </v-col>
-          <template v-if="$store.getters.isStudent">
-            <v-col>
-              <StudentEvents :student-events="$store.getters.studentEvents"/>
-            </v-col>
-            <v-col>
-              <StudentPayments
-                  :student="user"
-                  :student-payments="$store.getters.studentPayments"/>
-            </v-col>
-          </template>
-          <template v-else-if="$store.getters.isInstructor">
-            <v-col>
-              <StudentEvents :student-events="$store.getters.instructorEvents"/>
-            </v-col>
-          </template>
-        </v-row>
-      </v-card-text>
-    </v-card>
+              </p>
+            </v-card-title>
+          </v-img>
+          <MobileProfile v-if="$vuetify.breakpoint.mobile" :user="user"/>
+          <DesktopProfile v-else :user="user"/>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <Dialog v-model="changePasswordDialog" title="Смена пароля">
       <template v-slot:body>
@@ -185,14 +87,22 @@
 </template>
 
 <script>
-import Dialog from '@/components/Dialog'
-import StudentEvents from '@/components/student/StudentEvents'
-import StudentPayments from '@/components/student/StudentPayments'
-
+import DesktopProfile from '@/components/profile/DesktopProfile'
+import MobileProfile from '@/components/profile/MobileProfile'
 export default {
   name: 'Profile',
-  components: {StudentPayments, Dialog, StudentEvents},
+  components: {DesktopProfile, MobileProfile},
   computed: {
+    splittedUserName() {
+      const splitted = this.user.name.split(' ')
+      if (splitted[0][0]) {
+        return [
+          splitted[0][0].toUpperCase(),
+          splitted[1][0].toUpperCase(),
+        ]
+      }
+      return []
+    },
     user() {
       return this.$store.getters.user
     },
@@ -225,6 +135,10 @@ export default {
     },
   }),
   methods: {
+    async updateUser() {
+      await this.$store.dispatch('updateUser', this.user)
+      this.$toast.success('Пользователь сохранён')
+    },
     async changePassword() {
       if (this.$refs.passwordForm.validate()) {
         await this.$store.dispatch('changePassword', this.newPassword)

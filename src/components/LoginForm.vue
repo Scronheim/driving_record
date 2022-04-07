@@ -14,7 +14,7 @@
                       solo
                       required
                       :rules="inputRules"
-                      label="Полное имя*"
+                      label="ФИО*"
                       v-model="user.name"
         />
         <v-text-field dense

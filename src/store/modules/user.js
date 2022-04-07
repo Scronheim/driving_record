@@ -6,7 +6,7 @@ const userModule = {
   state: () => ({
     user: {
       _id: null,
-      name: null,
+      name: '',
       email: null,
       role: {},
       school: {},
@@ -145,40 +145,60 @@ const userModule = {
     token: state => state.token,
     paymentTypes: state => state.paymentTypes,
     user: state => state.user,
-    studentEvents: function (state, getters, rootState, rootGetters) {
+    studentEvents(state, getters, rootState, rootGetters) {
       return rootGetters.events.filter((e) => {
         return e.student._id === state.user._id
       })
     },
-    instructorEvents: function (state, getters, rootState, rootGetters) {
+    instructorEvents(state, getters, rootState, rootGetters) {
       return rootGetters.events.filter((e) => {
         return e.instructor._id === state.user._id
       })
     },
     studentPayments: state => state.user.payments,
     users: state => state.users,
-    instructors: function (state) {
+    instructors(state) {
       return state.users.filter((u) => {
         return u.role.role === 'Инструктор'
       })
     },
-    students: function (state) {
+    students(state) {
       return state.users.filter((u) => {
         return u.role.role === 'Ученик'
       })
     },
     roles: state => state.roles,
     isLogin: state => !!state.user._id,
-    isAdmin: function (state) {
+    isAdmin(state) {
       return state.user.role.role === 'Администратор'
     },
-    isInstructor: function (state) {
+    isInstructor(state) {
       return state.user.role.role === 'Инструктор'
     },
-    isStudent: function (state) {
+    isStudent(state) {
       return state.user.role.role === 'Ученик'
     },
-    userHasCourse: state => !!state.user.course,
+    userHasCourse: state => !!state.user.course.cost,
+    allUserDrivingsSum(state) {
+      const driving = state.user.payments.filter((p) => {
+        return p.type === '622f0b6c86788d850dc496f4' // тип вождение
+      })
+      return driving.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
+    },
+    drivingIsAvailable(state, getters) {
+      return getters.availableSumForDriving > state.user.course.driving.cost
+    },
+    availableSumForDriving(state, getters) {
+      const realMoney = state.user.payments.filter((p) => {
+        return p.type === '624e693d1d606f93efc3e444' // тип фактический взнос денег
+      })
+      const realMoneySum = realMoney.reduce((acc, value) => {
+        return acc + value.sum
+      }, 0)
+      return realMoneySum - getters.allUserDrivingsSum - (state.user.course.theory.cost - state.user.course.theory.discount) - (state.user.course.driving.cost * 4)
+    },
   }
 }
 

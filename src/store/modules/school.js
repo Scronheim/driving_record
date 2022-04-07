@@ -14,6 +14,14 @@ const schoolModule = {
     },
   },
   actions: {
+    async addNewGroup({rootState, dispatch}, payload) {
+      await axios.post(`${rootState.apiUrl}/groups`, payload)
+      dispatch('getGroups')
+    },
+    async updateGroup({rootState, dispatch}, payload) {
+      await axios.patch(`${rootState.apiUrl}/groups`, payload)
+      dispatch('getGroups')
+    },
     async getGroups({commit, rootState}) {
       const {data} = await axios.get(`${rootState.apiUrl}/groups`)
       commit('setGroups', data.data)
@@ -21,6 +29,15 @@ const schoolModule = {
     async getSchools({commit, rootState}) {
       const {data} = await axios.get(`${rootState.apiUrl}/schools`)
       commit('setSchools', data.data)
+    },
+    async removeSchool({rootState, dispatch}, payload) {
+      await axios.delete(`${rootState.apiUrl}/schools`, {
+        headers: {},
+        data: {
+          id: payload,
+        },
+      })
+      dispatch('getSchools')
     },
     async addNewSchool({rootState, dispatch}, payload) {
       await axios.post(`${rootState.apiUrl}/schools`, payload)

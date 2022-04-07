@@ -139,12 +139,12 @@ export default {
     x: 0,
     y: 0,
     eventHeaders: [
-      {text: 'Дата занятия', align: 'start', sortable: true, value: 'date'},
+      {text: 'Дата занятия', align: 'start', sortable: false, value: 'date'},
       {text: 'Время', align: 'start', sortable: false, value: 'time'},
       {text: 'Сумма', align: 'start', sortable: false, value: 'cost'},
-      {text: 'Инструктор', align: 'start', sortable: true, value: 'instructor'},
-      {text: 'Ученик', align: 'start', sortable: true, value: 'student'},
-      {text: 'Статус', align: 'start', sortable: true, value: 'status'},
+      {text: 'Инструктор', align: 'start', sortable: false, value: 'instructor'},
+      {text: 'Ученик', align: 'start', sortable: false, value: 'student'},
+      {text: 'Статус', align: 'start', sortable: false, value: 'status'},
       {text: 'Действия', align: 'start', sortable: false, value: 'actions', visible: false,},
     ],
   }),
@@ -155,14 +155,16 @@ export default {
       this.$toast.success('Статус обновлён')
     },
     show(e, {item}) {
-      Object.assign(this.currentEvent, item)
-      e.preventDefault()
-      this.showContextMenu = false
-      this.x = e.clientX
-      this.y = e.clientY
-      this.$nextTick(() => {
-        this.showContextMenu = true
-      })
+      if (this.$store.getters.isAdmin || this.$store.getters.isInstructor) {
+        Object.assign(this.currentEvent, item)
+        e.preventDefault()
+        this.showContextMenu = false
+        this.x = e.clientX
+        this.y = e.clientY
+        this.$nextTick(() => {
+          this.showContextMenu = true
+        })
+      }
     },
     removeEventButtonIsDisabled(event) {
       return !dayjs(event.start).diff(dayjs(), 'd') >= 0
@@ -174,13 +176,7 @@ export default {
       }
     },
     rowClass(item) {
-      if (item.status.name === 'Неявка') {
-        return 'orange lighten-3'
-      } else if (dayjs(item.start).isBefore(dayjs().format('x'))) {
-        return 'primary'
-      } else {
-        return 'success'
-      }
+      return item.status.color
     },
   }
 }
