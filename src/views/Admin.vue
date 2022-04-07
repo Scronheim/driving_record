@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
-    <v-tabs v-model="tab" align-with-title>
+    <v-tabs v-model="tab">
       <v-tabs-slider color="yellow" />
 
-      <v-tab>Инструктора</v-tab>
+      <v-tab>Инструкторы</v-tab>
       <v-tab>Классы</v-tab>
       <v-tab>Группы</v-tab>
       <v-tab>Ученики</v-tab>
