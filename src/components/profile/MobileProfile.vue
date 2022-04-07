@@ -29,7 +29,8 @@
     </template>
     <v-row>
       <v-col>
-        <v-text-field dense outlined label="Дата регистрации" readonly v-model="registerDate"/>
+        <v-btn class="mr-3" text outlined color="primary" @click="changePassword">Сменить пароль</v-btn>
+        <v-btn text outlined color="yellow" @click="showCourseDialog" v-if="$store.getters.userHasCourse">Выбранный курс</v-btn>
       </v-col>
     </v-row>
     <template v-if="!$store.getters.isAdmin">
@@ -64,6 +65,14 @@ export default {
   computed: {
     registerDate() {
       return dayjs(this.user.createdAt).format('DD.MM.YYYY')
+    }
+  },
+  methods: {
+    showCourseDialog() {
+      this.$emit('showCourseDialog')
+    },
+    changePassword() {
+      this.$emit('changePassword')
     }
   }
 }

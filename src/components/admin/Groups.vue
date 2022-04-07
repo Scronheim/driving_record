@@ -46,6 +46,7 @@
           <v-simple-checkbox :ripple="false" v-model="item.closed" @click="updateGroup(item)"/>
         </template>
       </v-data-table>
+
       <Dialog v-model="newGroupDialog" title="Добавление группы">
         <template v-slot:body>
           <v-text-field
@@ -91,7 +92,7 @@
           </v-menu>
         </template>
         <template v-slot:actions>
-          <v-btn text color="success" @click="addNewGroup">Добавить</v-btn>
+          <v-btn text outlined color="success" @click="addNewGroup">Добавить</v-btn>
         </template>
       </Dialog>
     </v-card-text>

@@ -81,9 +81,10 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-btn text color="success"
+        <v-btn text outlined color="success"
                :disabled="newEvents.length === 0"
-               @click="register">Записаться
+               @click="register">
+          Записаться
         </v-btn>
         <v-alert type="info">
           Вы можете записаться в 1 день максимум на 2 занятия. На последующие занятия можно записаться через администратора.

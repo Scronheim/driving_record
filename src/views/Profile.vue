@@ -24,8 +24,16 @@
               </p>
             </v-card-title>
           </v-img>
-          <MobileProfile v-if="$vuetify.breakpoint.mobile" :user="user"/>
-          <DesktopProfile v-else :user="user"/>
+          <MobileProfile v-if="$vuetify.breakpoint.mobile"
+                         :user="user"
+                         @changePassword="changePasswordDialog = true"
+                         @showCourseDialog="courseDialog = true"
+          />
+          <DesktopProfile v-else
+                          :user="user"
+                          @changePassword="changePasswordDialog = true"
+                          @showCourseDialog="courseDialog = true"
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -35,7 +43,7 @@
         <v-form ref="passwordForm">
           <v-text-field
               dense
-              solo-inverted
+              outlined
               :type="showPassword ? 'text' : 'password'"
               autocomplete="new-password"
               :rules="[rules.required, rules.min]"
@@ -43,7 +51,7 @@
               v-model="newPassword.password" />
           <v-text-field
               dense
-              solo-inverted
+              outlined
               :type="showPassword ? 'text' : 'password'"
               :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
               autocomplete="new-password"
@@ -54,7 +62,7 @@
         </v-form>
       </template>
       <template v-slot:actions>
-        <v-btn text color="success" @click="changePassword">Сменить </v-btn>
+        <v-btn text outlined color="success" @click="changePassword">Сменить </v-btn>
       </template>
     </Dialog>
     <Dialog v-if="$store.getters.isStudent" v-model="courseDialog" title="Просмотр выбранного курса" width="60%">
@@ -87,11 +95,12 @@
 </template>
 
 <script>
+import Dialog from '@/components/Dialog'
 import DesktopProfile from '@/components/profile/DesktopProfile'
 import MobileProfile from '@/components/profile/MobileProfile'
 export default {
   name: 'Profile',
-  components: {DesktopProfile, MobileProfile},
+  components: {DesktopProfile, MobileProfile, Dialog},
   computed: {
     splittedUserName() {
       const splitted = this.user.name.split(' ')

@@ -37,7 +37,7 @@
               v-model="newSchool.address" />
         </template>
         <template v-slot:actions>
-          <v-btn text color="success" @click="addNewSchool">Добавить</v-btn>
+          <v-btn text outlined color="success" @click="addNewSchool">Добавить</v-btn>
         </template>
       </Dialog>
     </v-card-text>

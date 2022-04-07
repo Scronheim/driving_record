@@ -137,7 +137,7 @@
               item-text="address" />
         </template>
         <template v-slot:actions>
-          <v-btn text color="success" @click="addNewInstructor">Добавить</v-btn>
+          <v-btn text outlined color="success" @click="addNewInstructor">Добавить</v-btn>
         </template>
       </Dialog>
       <Dialog v-model="carInfoDialog" title="Сведения об автомобиле">
@@ -173,7 +173,7 @@
               :items="['Ручная', 'Автомат']" />
         </template>
         <template v-slot:actions>
-          <v-btn text color="success" @click="saveCarInfo">Сохранить</v-btn>
+          <v-btn text outlined color="success" @click="saveCarInfo">Сохранить</v-btn>
         </template>
       </Dialog>
     </v-card-text>

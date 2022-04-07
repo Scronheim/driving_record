@@ -7,7 +7,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
-        <v-btn text color="error" @click.stop="show = false">Закрыть</v-btn>
+        <v-btn text outlined color="error" @click.stop="show = false">Закрыть</v-btn>
         <slot name="actions"/>
       </v-card-actions>
     </v-card>
