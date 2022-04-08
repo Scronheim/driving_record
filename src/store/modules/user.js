@@ -199,6 +199,7 @@ const userModule = {
       }, 0)
       return realMoneySum - getters.allUserDrivingsSum - (state.user.course.theory.cost - state.user.course.theory.discount) - (state.user.course.driving.cost * 4)
     },
+    themeIsDark: state => state.user.theme === 'dark',
   }
 }
 

@@ -9,14 +9,14 @@
         </template>
         <span>{{ drawer ? 'Закрыть': 'Открыть' }} меню</span>
       </v-tooltip>
-<!--      <v-tooltip bottom>-->
-<!--        <template v-slot:activator="{ on, attrs }">-->
-<!--          <v-btn icon @click="back" v-if="!isMobile" v-on="on" v-bind="attrs">-->
-<!--            <v-icon v-text="'mdi-arrow-left'"/>-->
-<!--          </v-btn>-->
-<!--        </template>-->
-<!--        <span>Назад</span>-->
-<!--      </v-tooltip>-->
+      <!--      <v-tooltip bottom>-->
+      <!--        <template v-slot:activator="{ on, attrs }">-->
+      <!--          <v-btn icon @click="back" v-if="!isMobile" v-on="on" v-bind="attrs">-->
+      <!--            <v-icon v-text="'mdi-arrow-left'"/>-->
+      <!--          </v-btn>-->
+      <!--        </template>-->
+      <!--        <span>Назад</span>-->
+      <!--      </v-tooltip>-->
 
       <div class="d-flex align-center">
         <v-img
@@ -29,6 +29,14 @@
       </div>
 
       <v-spacer/>
+<!--      <v-tooltip bottom>-->
+<!--        <template v-slot:activator="{on, attrs}">-->
+<!--          <v-btn icon v-on="on" v-bind="attrs" @click="changeTheme">-->
+<!--            <v-icon>{{ isDark? 'mdi-weather-sunny': 'mdi-weather-night' }}</v-icon>-->
+<!--          </v-btn>-->
+<!--        </template>-->
+<!--        <span>{{ isDark? 'Светлая тема': 'Тёмная тема' }}</span>-->
+<!--      </v-tooltip>-->
       <v-btn text to="/profile" v-if="!$vuetify.breakpoint.mobile">
         <v-icon>mdi-account</v-icon>
         {{ user.name }}
@@ -58,6 +66,9 @@ export default {
     }
   },
   computed: {
+    isDark() {
+      return this.$store.getters.themeIsDark
+    },
     user() {
       return this.$store.getters.user
     },
@@ -69,6 +80,17 @@ export default {
     drawer: true,
   }),
   methods: {
+    async changeTheme() {
+      if (this.isDark) {
+        this.$vuetify.theme.dark = false
+        this.user.theme = 'light'
+      } else {
+        this.$vuetify.theme.dark = true
+        this.user.theme = 'dark'
+      }
+      await this.$store.dispatch('updateUser', this.user)
+      this.$toast.success('Тема сохранена')
+    },
     back() {
       this.$router.go(-1)
     }

@@ -50,6 +50,9 @@ const userSchema = new mongoose.Schema(
     },
     car: {
       type: Object,
+    },
+    theme: {
+      type: String,
     }
   },
   {
