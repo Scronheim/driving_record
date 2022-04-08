@@ -14,18 +14,20 @@
             <v-tabs-items v-model="tab">
               <v-tab-item>
                 <v-row>
-                  <v-col cols="4">
+                  <v-col>
                     <v-list dense>
                       <v-list-item>
-                        <v-switch dense inset :label="manualTransmission ? 'Механическая': 'Автомат'"
-                                  v-model="manualTransmission"/>
+                        КПП:<v-switch dense inset :label="manualTransmission ? 'Механическая': 'Автомат'"
+                                      v-model="manualTransmission"/>
                       </v-list-item>
                       <v-list-item>
                         <v-slider
                             v-model="drivingCount"
-                            :max="3"
+                            :min="15"
+                            :max="30"
+                            :step="5"
+                            thumb-label="always"
                             label="Количество вождений"
-                            :tick-labels="labels"
                             ticks
                         />
                       </v-list-item>
@@ -119,7 +121,7 @@
                             <v-list-item-icon>
                               <v-icon>mdi-steering</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title class="text-h5">{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
+                            <v-list-item-title :class="classesForCourseTitle">{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
                           <v-list-item>
                             <v-list-item-icon>
@@ -133,7 +135,7 @@
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title class="text-h5" title="Цена за доп. вождение">{{ course.additionalDriving }}р</v-list-item-title>
+                            <v-list-item-title :class="classesForCourseTitle" title="Цена за доп. вождение">Цена доп. вождения {{ course.additionalDriving }}р</v-list-item-title>
                           </v-list-item>
                         </v-list>
                       </v-card-text>
@@ -159,7 +161,7 @@
                             <v-list-item-icon>
                               <v-icon>mdi-steering</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title>{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
+                            <v-list-item-title :class="classesForCourseTitle">{{ course.driving.classes }} вождений. {{ course.driving.cost }}р за вождение</v-list-item-title>
                           </v-list-item>
                           <v-list-item>
                             <v-list-item-icon>
@@ -173,7 +175,7 @@
                             <v-list-item-icon>
                               <v-icon>mdi-plus</v-icon>
                             </v-list-item-icon>
-                            <v-list-item-title class="text-h5" title="Цена за доп. вождение">{{ course.additionalDriving }}р</v-list-item-title>
+                            <v-list-item-title :class="classesForCourseTitle" title="Цена за доп. вождение">{{ course.additionalDriving }}р</v-list-item-title>
                           </v-list-item>
                         </v-list>
                       </v-card-text>
@@ -219,7 +221,7 @@
         Макс: <v-btn text color="yellow">{{ currentCourseMaxCost }}р</v-btn>
       </template>
       <template #actions>
-        <v-btn text color="success" @click="updateCourse">Сохранить</v-btn>
+        <v-btn text outlined color="success" @click="updateCourse">Сохранить</v-btn>
       </template>
     </Dialog>
   </v-container>
@@ -234,6 +236,12 @@ export default {
     this.$store.dispatch('getCourses')
   },
   computed: {
+    classesForCourseTitle() {
+      return {
+        'text-wrap': this.$vuetify.breakpoint.mobile,
+        'text-h5': !this.$vuetify.breakpoint.mobile,
+      }
+    },
     currentCourseMaxCost() {
       return (this.currentCourse.driving.classes * this.currentCourse.driving.cost) + (this.currentCourse.theory.class - this.currentCourse.theory.discount)
     },
@@ -251,7 +259,7 @@ export default {
       })
     },
     totalCost() {
-      return (this.labels[this.drivingCount] * this.oneDrivingCost) + this.theoryCost
+      return (this.drivingCount * this.oneDrivingCost) + this.theoryCost
     },
     oneDrivingCost() {
       if (this.manualTransmission) {
@@ -260,19 +268,19 @@ export default {
       return 1000
     },
     additionalDrivingCost() {
-      if (this.drivingCount === 3 || this.drivingCount === 2) {
+      if (this.drivingCount === 30 || this.drivingCount === 25) {
         if (this.manualTransmission) {
           return 900
         } else {
           return 1000
         }
-      } else if (this.drivingCount === 1) {
+      } else if (this.drivingCount === 20) {
         if (this.manualTransmission) {
           return 1000
         } else {
           return 1100
         }
-      } else if (this.drivingCount === 0) {
+      } else if (this.drivingCount === 15) {
         if (this.manualTransmission) {
           return 1000
         } else {
@@ -282,13 +290,13 @@ export default {
       return 0
     },
     theoryCost() {
-      if (this.drivingCount === 3 || this.drivingCount === 0) {
+      if (this.drivingCount === 30 || this.drivingCount === 15) {
         if (this.courseInClass) {
           return 3900
         } else {
           return 2500
         }
-      } else if (this.drivingCount === 2 || this.drivingCount === 1) {
+      } else if (this.drivingCount === 25 || this.drivingCount === 20) {
         if (this.courseInClass) {
           return 4900
         } else {
@@ -312,8 +320,7 @@ export default {
     tab: 0,
     courseInClass: true,
     manualTransmission: true,
-    drivingCount: 3,
-    labels: [15, 20, 25, 30],
+    drivingCount: 15,
   }),
   methods: {
     async updateCourse() {
@@ -354,7 +361,7 @@ export default {
           cost: oneDrivingCost()
         },
         theory: {
-          place: this.courseInClass ? 'Класс': 'Онлайн',
+          place: this.courseInClass ? 'Класс' : 'Онлайн',
           cost: theoryCost(),
           discount: 0,
         },
@@ -371,14 +378,14 @@ export default {
       })
       const course = {
         name: existingCourse?.name || '',
-        transmission: this.manualTransmission ? 'Механика': 'Автомат',
+        transmission: this.manualTransmission ? 'Механика' : 'Автомат',
         cost: this.totalCost,
         driving: {
-          class: this.labels[this.drivingCount],
+          class: this.drivingCount,
           cost: this.oneDrivingCost,
         },
         theory: {
-          place: this.courseInClass ? 'Класс': 'Онлайн',
+          place: this.courseInClass ? 'Класс' : 'Онлайн',
           cost: this.theoryCost,
           discount: 0,
         },
