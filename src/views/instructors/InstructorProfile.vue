@@ -187,18 +187,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-          <v-btn color="error" @click="eventDialog = false">Закрыть</v-btn>
+          <v-btn text outlined color="error" @click="eventDialog = false">Закрыть</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="addEventDialog" max-width="60%" :fullscreen="$vuetify.breakpoint.mobile">
-      <v-card>
-        <v-card-title>Добавить событие</v-card-title>
-        <v-card-text>
 
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 

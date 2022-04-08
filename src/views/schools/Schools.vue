@@ -31,7 +31,7 @@ export default {
         school.studentsCount = students.length
         school.groupsCount = groups.length
       })
-      return this.$_.chunk(schools, 3)
+      return this.$_.chunk(schools, this.$vuetify.breakpoint.mobile? 1: 3)
     }
   },
   data: () => ({

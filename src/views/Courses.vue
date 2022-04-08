@@ -17,8 +17,10 @@
                   <v-col>
                     <v-list dense>
                       <v-list-item>
-                        КПП:<v-switch dense inset :label="manualTransmission ? 'Механическая': 'Автомат'"
-                                      v-model="manualTransmission"/>
+                        <v-radio-group label="КПП" v-model="manualTransmission">
+                          <v-radio label="Механическая" :value="true"/>
+                          <v-radio label="Автомат" :value="false"/>
+                        </v-radio-group>
                       </v-list-item>
                       <v-list-item>
                         <v-slider
@@ -40,19 +42,19 @@
                         <span class="v-label theme--dark">Цена за 1 вождение: <b>{{ oneDrivingCost }}р</b></span>
                       </v-list-item>
                       <v-list-item>
-                        <v-radio-group v-model="courseInClass">
+                        <v-radio-group label="Место проведения теории" v-model="courseInClass">
                           <v-radio label="Класс" :value="true"/>
                           <v-radio label="Онлайн" :value="false"/>
                         </v-radio-group>
                         <v-list-item-title>
-                          <span class="v-label theme--dark ml-10">{{ theoryCost }}р</span>
+                          <span class="v-label theme--dark mt-10">{{ theoryCost }}р</span>
                         </v-list-item-title>
                       </v-list-item>
                       <v-list-item>
                         <span class="v-label theme--dark">Дополнительное вождение: <b>{{ additionalDrivingCost }}р</b></span>
                       </v-list-item>
                       <v-list-item>
-                        <v-btn light x-large block color="yellow"
+                        <v-btn light x-large block color="yellow" class="text-h5"
                                :disabled="$store.getters.userHasCourse"
                                @click="selectCourse">
                           {{ totalCost }}р</v-btn>
