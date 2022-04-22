@@ -37,13 +37,10 @@ export default {
   name: "Group",
   computed: {
     chunkedStudents() {
-      if (this.$store.getters.groups.length > 0) {
-        const group = this.$store.getters.groups.find((g) => {
-          return g.school._id === this.$route.params.id
-        })
-        return this.$_.chunk(group.students, 5)
-      }
-      return []
+      const students = this.$store.getters.students.filter((s) => {
+        return s.group === this.$route.params.id
+      })
+      return this.$_.chunk(students, 5)
     }
   },
   methods: {

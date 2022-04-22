@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+  <v-data-table style="background-color: #363636"
       dense no-data-text="Нет данных"
       :headers="paymentHeaders"
       :items="studentPayments">

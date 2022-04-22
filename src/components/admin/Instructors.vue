@@ -1,8 +1,8 @@
 <template>
-  <v-card>
+  <v-card color="#363636">
     <v-card-text>
       <v-btn text outlined color="success" @click.stop="newInstructorDialog = true">Добавить</v-btn>
-      <v-data-table
+      <v-data-table style="background-color: #363636"
           dense
           :footer-props="{'items-per-page-options': rowsPerPageItems}"
           :headers="instructorHeaders"

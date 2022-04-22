@@ -17,7 +17,7 @@ exports.removeEvent = async (req, res) => {
   return jsonResponse(res, null, null, true, 200)
 }
 
-exports.addEvent = async (req, res) => {
+exports.addEvents = async (req, res) => {
   await Event.insertMany(req.body)
   return jsonResponse(res, null, null, true, 201)
 }
@@ -75,6 +75,7 @@ async function getEvents() {
     {$unwind: '$status'},
     {$unwind: '$instructor'},
     {$unwind: '$student'},
+    {$sort: {start: -1}},
   ])
 }
 

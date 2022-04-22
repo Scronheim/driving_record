@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card color="#363636">
     <v-card-text>
       <v-row>
         <v-col cols="3">
@@ -9,7 +9,7 @@
           <v-text-field dense label="Поиск" v-model="searchQuery" hide-details outlined clearable/>
         </v-col>
       </v-row>
-      <v-data-table
+      <v-data-table style="background-color: #363636"
           dense
           :search="searchQuery"
           :footer-props="{'items-per-page-options': rowsPerPageItems}"

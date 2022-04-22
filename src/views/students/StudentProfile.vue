@@ -1,31 +1,43 @@
 <template>
   <v-container fluid>
-    <v-card>
+    <v-card color="#363636">
       <v-card-title>{{ student.name }}</v-card-title>
       <v-card-text>
-        <v-row>
-          <v-col>
+        <v-card flat color="#363636">
+          <v-card-title>Информация об ученике</v-card-title>
+          <v-card-text>
             <StudentInfo
                 :student="student"
                 @updateStudent="updateStudent"
             />
-          </v-col>
-        </v-row>
-        <v-row v-if="$store.getters.isAdmin">
-          <v-col>
-            <v-btn text color="success" @click="newPaymentDialog = true">Добавить платёж</v-btn>
+          </v-card-text>
+        </v-card>
+        <v-card flat color="#363636" v-if="$store.getters.isAdmin">
+          <v-card-title>
+            Платежи
+            <v-tooltip top>
+              <template v-slot:activator="{on}">
+                <v-btn icon color="success" v-on="on" @click="newPaymentDialog = true">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>Добавить платёж</span>
+            </v-tooltip>
+          </v-card-title>
+          <v-card-text>
             <StudentPayments
-                :student-payments="student.payments"
+                :student-payments="studentPayments"
                 :student="student"
                 @updateStudent="updateStudent"
             />
-          </v-col>
-        </v-row>
-        <v-row v-if="$store.getters.isAdmin">
-          <v-col>
+          </v-card-text>
+        </v-card>
+        <v-card flat color="#363636" v-if="$store.getters.isAdmin">
+          <v-card-title>Занятия</v-card-title>
+          <v-card-text>
             <StudentEvents :student-events="studentEvents"/>
-          </v-col>
-        </v-row>
+          </v-card-text>
+        </v-card>
       </v-card-text>
     </v-card>
 
@@ -41,7 +53,7 @@
         <v-text-field dense solo-inverted hide-details label="Комментарий" class="ma-1" v-model="newPayment.comment"/>
       </template>
       <template v-slot:actions>
-        <v-btn text color="success" @click="addPayment">Добавить</v-btn>
+        <v-btn outlined text color="success" @click="addPayment">Добавить</v-btn>
       </template>
     </Dialog>
   </v-container>
@@ -77,10 +89,21 @@ export default {
         return e.student._id === this.$route.params.id
       })
     },
+    studentPayments() {
+      const student = this.$store.getters.students.find((s) => {
+        return s._id === this.$route.params.id
+      })
+      if (student) {
+        return student.payments.sort((a, b) => {
+          return b.date - a.date
+        })
+      }
+      return []
+    }
   },
   data: () => ({
     newPayment: {
-      date: null,
+      date: dayjs().format('YYYY-MM-DD'),
       type: null,
       sum: null,
       comment: null,
@@ -98,6 +121,7 @@ export default {
       this.student.payments.push(payment)
       await this.$store.dispatch('updateUser', this.student)
       this.$toast.success(`Платёж добавлен`)
+      this.newPaymentDialog = false
     }
   }
 }

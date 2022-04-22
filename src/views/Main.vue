@@ -5,7 +5,7 @@
         Стоимость занятия {{ user.course.driving.cost }}р. Вам доступно {{ $store.getters.availableSumForDriving }}р
       </v-alert>
       <v-alert type="warning" v-else>
-        Доступная для вождения сумма ({{ $store.getters.availableSumForDriving }}р) меньше стоимости одного занятия ({{ user.course.driving.cost }}р).
+        Доступная для вождения сумма меньше стоимости одного занятия ({{ user.course.driving.cost }}р).
         Пополните пожалуйста счёт через администратора
       </v-alert>
     </template>
@@ -108,7 +108,7 @@
             :interval-format="intervalFormatter"
         >
           <template v-slot:event="{ event }">
-            <strong>{{ event.name }}</strong>
+            <strong>{{ event.name }} {{ event.student._id === user._id? 'Вами': 'другим учеником' }}</strong><br/>
             {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
           </template>
         </v-calendar>
@@ -149,6 +149,7 @@ export default {
     }
   },
   data: () => ({
+    newEvents: [],
     instructorFilter: '',
     currentStep: 1,
     record: {
@@ -161,7 +162,6 @@ export default {
       status: null,
       name: null,
     },
-    newEvents: [],
     typeToLabel: {
       month: 'Месяц',
       week: 'Неделя',
@@ -177,10 +177,6 @@ export default {
     modes: ['stack', 'column'],
     weekday: [1, 2, 3, 4, 5, 6, 0],
     focus: '',
-    dragEvent: null,
-    dragStart: null,
-    createEvent: null,
-    createStart: null,
     extendOriginal: null,
   }),
   methods: {
@@ -207,49 +203,45 @@ export default {
       this.$store.commit('addPayment', payload)
     },
     addEvent(tms) {
-      const mouse = this.toTime(tms)
+      const clickedTime = this.toTime(tms)
       const eventIndex = this.events.findIndex((e) => {
-        return e.start === this.roundTime(mouse)
+        return e.start === this.roundTime(clickedTime)
       })
-
       if (eventIndex > -1) {
         const oldEvent = this.events[eventIndex]
-        if (oldEvent.name === 'Занято') {
-          if (oldEvent.student._id === this.user._id) {
-            if (!dayjs(oldEvent.start).diff(dayjs(), 'd') > 0) {
-              this.$toast.error('Нельзя отписаться менее чем за сутки')
-              return
-            } else {
-              if (confirm(`Вы уверены что хотите отписаться от занятия?`)) {
-                this.newEvents.splice(eventIndex, 1)
-                this.$store.dispatch('removeEvent', oldEvent._id)
-                this.$store.commit('removePayment', oldEvent.start)
-                this.$store.dispatch('updateUser')
-              }
-              return
-            }
-          } else {
-            this.$toast.warning('Данное время занято другим человеком')
-            return
+        if (this.roundTime(clickedTime) === oldEvent.start && oldEvent.student._id === this.user._id) {
+          if (confirm(`Вы уверены что хотите отписаться от занятия?`)) {
+            this.$store.commit('removeEvent', eventIndex)
+            this.$store.commit('removePayment', oldEvent.start)
           }
+        } else {
+          this.$toast.error('Данное время занято другим учеником')
         }
-      }
-      if (this.newEvents.length >= 2) {
-        this.$toast.error('Записаться можно не больше чем на 2 занятия в сутки')
         return
       }
-      this.createStart = this.roundTime(mouse)
+      const createStart = this.roundTime(clickedTime)
+      if (createStart < parseInt(dayjs().format('x'))) {
+        this.$toast.error('Нельзя записаться на сегодняшнюю или прошедшие даты')
+        return
+      }
+      if (dayjs(createStart).diff(dayjs(), 'hours') < 24) {
+        this.$toast.error('Нельзя записаться менее чем за 24 часа')
+        return
+      }
       const event = {
-        type: '6221d6203962a189d7ade049',
-        name: 'Занято',
-        color: 'error',
-        start: this.createStart,
-        end: parseInt(dayjs(this.createStart).add(1.5, 'h').format('x')),
-        instructor: this.record.instructor._id,
-        student: this.record.student._id,
-        cost: this.$store.getters.user.course.driving.cost,
+        type: {
+          _id: '6221d6203962a189d7ade049',
+          name: 'Занято',
+          color: 'primary'
+        },
+        start: createStart,
+        end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
+        instructor: this.record.instructor,
+        student: this.record.student,
+        cost: this.user.course.driving.cost,
         timed: true,
-        status: '623190b8926bff909550602c'
+        status: '623190b8926bff909550602c',
+        isNewEvent: true,
       }
       this.newEvents.push(event)
       this.$store.commit('addEvent', event)

@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" :width="width" :fullscreen="$vuetify.breakpoint.mobile">
-    <v-card>
+    <v-card :color="color">
       <v-card-title>{{ title }}</v-card-title>
       <v-card-text>
         <slot name="body"/>
@@ -29,6 +29,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    color: {
+      type: String,
+      default: '#363636'
     }
   },
   computed: {

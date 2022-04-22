@@ -3,7 +3,7 @@
     <template v-if="chunkedGroups.length > 0">
       <v-row v-for="(chunk, chunkIndex) in chunkedGroups" :key="`chunk-${chunkIndex}`">
         <v-col v-for="(group, groupIndex) in chunk" :key="`group-${groupIndex}`">
-          <v-card link :to="`/groups/${group.school._id}`">
+          <v-card link :to="`/groups/${group._id}`">
             <v-card-title>{{ group.name }}</v-card-title>
             <v-card-text>
               <v-list dense>

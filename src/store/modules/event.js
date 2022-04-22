@@ -30,8 +30,8 @@ const eventModule = {
     },
   },
   actions: {
-    async updateEvent({rootState, dispatch}, payload) {
-      await axios.patch(`${rootState.apiUrl}/events`, payload)
+    async updateEvent({rootState, dispatch}, event) {
+      await axios.patch(`${rootState.apiUrl}/events`, event)
       dispatch('getEvents')
     },
     async removeEvent({rootState, dispatch}, eventId) {

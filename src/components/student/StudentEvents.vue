@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid>
-    <v-data-table
+  <div>
+    <v-data-table style="background-color: #363636"
         dense no-data-text="Нет данных"
         :headers="eventHeaders"
         :items="studentEvents"
@@ -64,18 +64,34 @@
         {{ item.student.name }} ({{ item.student.phone }})
       </template>
       <template v-slot:item.status="{item}">
-        {{ item.status.name }}
+        <v-edit-dialog v-if="$store.getters.isAdmin"
+                       @save="updateEvent(item)"
+                       :return-value.sync="item.status"
+        >
+          {{ item.status.name }}
+          <template v-slot:input>
+            <v-select
+                dense
+                v-model="item.status"
+                :items="$store.getters.eventStatuses"
+                item-value="_id"
+                item-text="name"
+            />
+          </template>
+        </v-edit-dialog>
+        <template v-else>
+          {{ item.status.name }}
+        </template>
       </template>
       <template v-slot:item.actions="{item}" v-if="$store.getters.isAdmin">
         <v-tooltip top>
           <template v-slot:activator="{on, attrs}">
             <v-btn icon color="error" v-on="on" v-bind="attrs"
-                   :disabled="removeEventButtonIsDisabled(item)"
                    @click="removeEvent(item)">
-              <v-icon>mdi-close</v-icon>
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
-          <span>Отписаться</span>
+          <span>Удалить</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -96,7 +112,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -149,6 +165,10 @@ export default {
     ],
   }),
   methods: {
+    async updateEvent(event) {
+      await this.$store.dispatch('updateEvent', event)
+      this.$toast.success('Занятие обновлено')
+    },
     async setEventStatus(status) {
       this.currentEvent.status = status._id
       await this.$store.dispatch('updateEvent', this.currentEvent)

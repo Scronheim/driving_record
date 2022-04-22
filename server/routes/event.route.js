@@ -10,7 +10,7 @@ module.exports = function(app) {
     next()
   })
   app.get('/api/events', controller.getEvents)
-  app.post('/api/events', controller.addEvent)
+  app.post('/api/events', controller.addEvents)
   app.patch('/api/events', controller.updateEvent)
   app.delete('/api/events', [authJwt.verifyToken], controller.removeEvent)
   app.get('/api/event_types', controller.getEventTypes)

@@ -1,5 +1,5 @@
 <template>
-  <v-simple-table dense>
+  <v-simple-table dense style="background-color: #363636">
     <thead>
       <tr>
         <th>ФИО</th>
