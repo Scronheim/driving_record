@@ -1,7 +1,14 @@
 <template>
   <v-card color="#363636">
     <v-card-text>
-      <v-btn text outlined color="success" @click.stop="newInstructorDialog = true">Добавить</v-btn>
+      <v-row>
+        <v-col cols="1">
+          <v-btn text outlined color="success" @click.stop="newInstructorDialog = true">Добавить</v-btn>
+        </v-col>
+        <v-col cols="2">
+          <v-checkbox dense label="Показать всех" v-model="showAllInstructors"/>
+        </v-col>
+      </v-row>
       <v-data-table style="background-color: #363636"
           dense
           :footer-props="{'items-per-page-options': rowsPerPageItems}"
@@ -187,14 +194,19 @@ export default {
   components: {Dialog},
   computed: {
     instructors() {
-      return this.$store.getters.instructors
+      return this.$store.getters.instructors.filter((i) => {
+        if (this.showAllInstructors) {
+          return i
+        }
+        return !i.disabled
+      })
     },
   },
   data: () => ({
+    showAllInstructors: false,
     currentInstructor: {
       car: {},
     },
-
     newInstructor: {
       name: null,
       password: null,
