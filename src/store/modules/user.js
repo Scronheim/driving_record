@@ -51,7 +51,8 @@ const userModule = {
       state.roles = payload
     },
     setUser(state, payload) {
-      state.user = payload
+      Object.assign(state.user, payload)
+      // state.user = payload
     },
     setUsers(state, payload) {
       state.users = payload

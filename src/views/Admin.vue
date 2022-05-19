@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid v-if="$store.getters.isAdmin">
     <v-tabs v-model="tab">
       <v-tabs-slider color="yellow" />
 
