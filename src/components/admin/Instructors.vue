@@ -240,7 +240,7 @@ export default {
         const {data} = await this.$store.dispatch('uploadPhoto', formData)
         this.newInstructor.car.photo = data.data.photo
       }
-      await this.$store.dispatch('addNewInstructor', this.newInstructor)
+      await this.$store.dispatch('insertUser', this.newInstructor)
       this.$toast.success(`Инструктор добавлен`)
     },
     async updateInstructor(instructor) {

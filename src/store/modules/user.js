@@ -93,6 +93,10 @@ const userModule = {
       const {data} = await axios.get(`${rootState.apiUrl}/users`)
       commit('setUsers', data.data)
     },
+    async insertUser({rootState, dispatch}, user) {
+      await axios.post(`${rootState.apiUrl}/users`, user)
+      dispatch('getUsers')
+    },
     async updateUser({rootState, dispatch, state}, payload) {
       const user = payload ? payload : state.user
       await axios.patch(`${rootState.apiUrl}/users`, user)

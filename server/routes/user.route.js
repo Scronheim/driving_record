@@ -12,5 +12,6 @@ module.exports = function(app) {
   app.post('/api/upload_photo', controller.uploadPhoto)
   app.get('/api/users', controller.getUsers)
   app.patch('/api/users', [authJwt.verifyToken], controller.updateUser)
+  app.post('/api/users', [authJwt.verifyToken], controller.insertUser)
   app.get('/api/payment_types', [authJwt.verifyToken], controller.getPaymentTypes)
 }
