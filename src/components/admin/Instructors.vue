@@ -132,16 +132,6 @@
               accept="image/*"
               class="ma-2"
               v-model="newInstructor.car.photo" />
-          <v-subheader class="px-0">Выберите класс</v-subheader>
-          <v-select
-              dense
-              outlined
-              hide-details
-              class="ma-2"
-              v-model="newInstructor.school"
-              :items="$store.getters.schools"
-              item-value="_id"
-              item-text="address" />
         </template>
         <template v-slot:actions>
           <v-btn text outlined color="success" @click="addNewInstructor">Добавить</v-btn>
