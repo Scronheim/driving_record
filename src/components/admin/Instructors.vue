@@ -123,7 +123,7 @@
               label="Тип коробки передач"
               class="ma-2"
               v-model="newInstructor.car.transmission"
-              :items="['Ручная', 'Автомат']" />
+              :items="['Механика', 'Автомат']" />
           <v-file-input
               dense
               outlined
@@ -167,7 +167,7 @@
               label="Тип коробки передач"
               class="ma-2"
               v-model="currentInstructor.car.transmission"
-              :items="['Ручная', 'Автомат']" />
+              :items="['Механика', 'Автомат']" />
         </template>
         <template v-slot:actions>
           <v-btn text outlined color="success" @click="saveCarInfo">Сохранить</v-btn>
@@ -206,7 +206,7 @@ export default {
         model: null,
         lpn: null,
         color: null,
-        transmission: 'Ручная',
+        transmission: 'Механика',
         photo: null,
       },
       school: null,
