@@ -7,7 +7,7 @@
     </v-row>
     <v-row v-for="(chunk, chunkIndex) in chunkedInstructors" :key="`chunk-${chunkIndex}`">
       <v-col v-for="(instructor, instructorIndex) in chunk" :key="`instructor-${instructorIndex}`">
-        <v-card @click="$router.push(`/instructors/${instructor._id}`)">
+        <v-card>
           <v-card-title>{{ instructor.name }}</v-card-title>
           <v-card-text>
             <v-row>
@@ -21,7 +21,7 @@
                 <v-btn block text color="primary">{{ instructor.car.lpn }}</v-btn>
                 <v-btn block text color="primary">{{ instructor.car.transmission }}</v-btn>
                 <v-btn block text color="primary">{{ instructor.car.color }}</v-btn>
-                <v-btn block text color="primary">{{ instructor.phone }}</v-btn>
+                <v-btn block text :href="`tel:${instructor.phone}`" color="primary">{{ instructor.phone }}</v-btn>
               </v-col>
             </v-row>
           </v-card-text>

@@ -12,7 +12,7 @@ const routes = [
       requiresAuth: false,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Main" */ '../views/Main')
+    component: () => import('../views/Main')
   },
   {
     path: '/profile',
@@ -21,16 +21,16 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Profile" */ '../views/Profile')
+    component: () => import('../views/Profile')
   },
   {
     path: '/schools',
     name: 'Schools',
     meta: {
-      requiresAuth: true,
+      requiresAuth: false,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Schools" */ '../views/schools/Schools')
+    component: () => import('../views/schools/Schools')
   },
   {
     path: '/schools/:id',
@@ -39,25 +39,25 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "School profile" */ '../views/schools/SchoolProfile')
+    component: () => import('../views/schools/SchoolProfile')
   },
   {
     path: '/instructors',
     name: 'Instructors',
     meta: {
-      requiresAuth: true,
+      requiresAuth: false,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Instructors" */ '../views/instructors/Instructors')
+    component: () => import('../views/instructors/Instructors')
   },
   {
-    path: '/instructors/:id',
+    path: '/instructor/:id',
     name: 'Instructor profile',
     meta: {
       requiresAuth: true,
-      requiresAdmin: false,
+      requiresAdmin: true,
     },
-    component: () => import(/* webpackChunkName: "Instructor profile" */ '../views/instructors/InstructorProfile')
+    component: () => import('../views/instructors/InstructorProfile')
   },
   {
     path: '/groups/:id',
@@ -66,7 +66,7 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Group page" */ '../views/schools/Group')
+    component: () => import('../views/schools/Group')
   },
   {
     path: '/student/:id',
@@ -75,7 +75,7 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Student page" */ '../views/students/StudentProfile')
+    component: () => import('../views/students/StudentProfile')
   },
   {
     path: '/events/:id',
@@ -84,7 +84,7 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "Event page" */ '../views/events/EventProfile')
+    component: () => import('../views/events/EventProfile')
   },
   {
     path: '/admin',
@@ -93,7 +93,7 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: true,
     },
-    component: () => import(/* webpackChunkName: "Admin page" */ '../views/Admin')
+    component: () => import('../views/Admin')
   },
   {
     path: '/courses',
@@ -102,7 +102,7 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: false,
     },
-    component: () => import(/* webpackChunkName: "courses page" */ '../views/Courses')
+    component: () => import('../views/Courses')
   },
 ]
 
@@ -112,19 +112,17 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (store.getters.isLogin) {
-      next()
-      return
+      return next()
     }
-    next('/')
+    return next('/')
   } else if (to.matched.some((record) => record.meta.requiresAdmin)) {
     if (store.getters.isAdmin) {
-      next()
-      return
+      return next()
     }
-    next('/')
+    return next('/')
   }
   else {
-    next()
+    return next()
   }
 })
 export default router

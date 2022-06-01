@@ -79,6 +79,7 @@
                 </v-list>
               </v-card>
             </v-menu>
+            <v-btn text outlined color="success" @click="saveNewEvents">Сохранить</v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -109,14 +110,6 @@
               <v-toolbar-title v-if="$refs.calendar">
                 {{ $refs.calendar.title }}
               </v-toolbar-title>
-              <v-tooltip bottom v-if="$store.getters.isAdmin">
-                <template v-slot:activator="{on, attrs}">
-                  <v-btn small icon color="success" v-on="on" v-bind="attrs" @click="addEventDialog = true">
-                    <v-icon v-text="'mdi-plus'"/>
-                  </v-btn>
-                </template>
-                <span>Добавить событие</span>
-              </v-tooltip>
             </v-toolbar>
           </v-col>
         </v-row>
@@ -129,6 +122,7 @@
             :events="events"
             @click:date="viewDay"
             @click:event="showEventDialog"
+            @mousedown:time="addEvent"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
             first-time="08:00"
@@ -196,6 +190,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   name: 'InstructorProfile',
   computed: {
@@ -224,7 +219,7 @@ export default {
       week: 'Неделя',
       day: 'День',
     },
-    type: 'month',
+    type: 'week',
     types: [
       {text: 'День', value: 'day'},
       {text: 'Неделя', value: 'week'},
@@ -241,6 +236,42 @@ export default {
     },
   }),
   methods: {
+    async saveNewEvents() {
+      const newEvents = this.events.filter((e) => {
+        return e.isNewEvent
+      })
+      await this.$store.dispatch('addNewEvents', newEvents)
+      this.$toast.success('Расписание сохранено')
+    },
+    async addEvent(tms) {
+      const clickedTime = this.toTime(tms)
+      const createStart = this.roundTime(clickedTime)
+      const event = {
+        type: {
+          _id: '6221d6183962a189d7ade048',
+          name: 'Свободно',
+          color: 'success'
+        },
+        start: createStart,
+        end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
+        instructor: {_id: this.instructor._id},
+        timed: true,
+        status: '623190b8926bff909550602c',
+        isNewEvent: true,
+      }
+      this.$store.commit('addEvent', event)
+    },
+    roundTime(time, down = true) {
+      const roundTo = 90 // minutes
+      const roundDownTime = roundTo * 60 * 1000
+
+      return down
+          ? time - time % roundDownTime
+          : time + (roundDownTime - (time % roundDownTime))
+    },
+    toTime(tms) {
+      return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime()
+    },
     setToday () {
       this.focus = ''
     },

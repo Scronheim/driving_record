@@ -15,6 +15,9 @@
           :headers="instructorHeaders"
           :items="instructors"
       >
+        <template v-slot:item.profile="{item}">
+          <v-btn text small link :to="`/instructor/${item._id}`">Перейти</v-btn>
+        </template>
         <template v-slot:item.name="{item}">
           <v-edit-dialog
               @save="updateInstructor(item)"
@@ -217,6 +220,7 @@ export default {
     carInfoDialog: false,
     rowsPerPageItems: [15, 30, 50, 100, -1],
     instructorHeaders: [
+      {text: 'Профиль', align: 'start', sortable: false, value: 'profile'},
       {text: 'ФИО', align: 'start', sortable: false, value: 'name'},
       {text: 'Email', align: 'start', sortable: false, value: 'email'},
       {text: 'Телефон', align: 'start', sortable: false, value: 'phone'},
@@ -241,6 +245,7 @@ export default {
         this.newInstructor.car.photo = data.data.photo
       }
       await this.$store.dispatch('insertUser', this.newInstructor)
+      this.newInstructorDialog = false
       this.$toast.success(`Инструктор добавлен`)
     },
     async updateInstructor(instructor) {

@@ -22,11 +22,12 @@ const eventModule = {
     removeEvent(state, eventIndex) {
       state.events.splice(eventIndex, 1)
     },
-    removeEventById(state, eventId) {
-      const eventIndex = state.events.findIndex((e) => {
-        return e._id === eventId
+    updateEvent(state, event) {
+      const events = state.events.filter((e) => {
+        return e._id !== event._id
       })
-      state.events.splice(eventIndex, 1)
+      events.push(event)
+      state.events = events
     },
   },
   actions: {

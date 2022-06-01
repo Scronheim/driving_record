@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+
 import schoolModule from '@/store/modules/school'
 import eventModule from '@/store/modules/event'
 import userModule from '@/store/modules/user'
@@ -22,6 +24,9 @@ export default new Vuex.Store({
       await dispatch('getUsers')
       await dispatch('getPaymentTypes')
       await dispatch('getRoles')
+    },
+    async uploadPhoto(context, payload) {
+      return await axios.post('/api/upload_photo', payload)
     }
   },
   modules: {

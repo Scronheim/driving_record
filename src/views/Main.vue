@@ -99,7 +99,8 @@
             :type="type"
             :events="events"
             @click:date="viewDay"
-            @mousedown:time="addEvent"
+            @click:event="addEvent"
+
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
             first-time="08:00"
@@ -108,8 +109,8 @@
             :interval-format="intervalFormatter"
         >
           <template v-slot:event="{ event }">
-            <strong>{{ event.name }} {{ event.student._id === user._id? 'Вами': 'другим учеником' }}</strong><br/>
-            {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
+<!--            <strong>{{ event.name }} {{ event.student._id === user._id? 'Вами': 'другим учеником' }}</strong><br/>-->
+            <strong>{{ event.type.name }}</strong> {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
           </template>
         </v-calendar>
       </v-stepper-content>
@@ -181,9 +182,9 @@ export default {
   }),
   methods: {
     async register() {
-      await this.$store.dispatch('addNewEvents', this.newEvents)
       await this.$store.dispatch('updateUser')
-      this.newEvents.forEach((e) => {
+      this.newEvents.forEach(async (e) => {
+        await this.$store.dispatch('updateEvent', e)
         const date = dayjs(e.start).format('DD.MM.YYYY')
         const timeStart = dayjs(e.start).format('HH:mm')
         const timeEnd = dayjs(e.end).format('HH:mm')
@@ -202,8 +203,50 @@ export default {
       }
       this.$store.commit('addPayment', payload)
     },
-    addEvent(tms) {
-      const clickedTime = this.toTime(tms)
+    addEvent(event) {
+      const newEvent = {
+        _id: event.event._id,
+        type: {
+          _id: '6221d6203962a189d7ade049',
+          name: 'Занято',
+          color: 'primary'
+        },
+        start: event.event.start,
+        end: event.event.end,
+        instructor: this.record.instructor,
+        student: this.record.student,
+        cost: this.user.course.driving.cost,
+        timed: true,
+        status: {
+          _id: '623190b8926bff909550602c',
+          color: 'primary',
+          name: 'Запланировано'
+        },
+        isUpdated: true,
+      }
+      const oneDayEventCount = this.newEvents.filter((e) => {
+        return dayjs(e.start).format('YYYY-MM-DD') === event.eventParsed.end.date
+      }).length
+      if (oneDayEventCount > 1) {
+        this.$toast.error('Можно записаться только на 2 занятия в 1 день')
+        return
+      }
+      if (event.event.type._id !== '6221d6183962a189d7ade048' && event.event.color === 'error') { // Свободно
+        this.$toast.error('Можно выбирать время только со статусом "Свободно"')
+        return
+      }
+      if (event.event.color === 'primary') {
+        if (confirm('Вы действительно хотите убрать эту запись?')) {
+          newEvent.type = {
+            _id: '6221d6203962a189d7ade048',
+            name: 'Свободно',
+            color: 'success'
+          }
+        } else {
+          return
+        }
+      }
+      const clickedTime = this.toTime(event.day)
       const eventIndex = this.events.findIndex((e) => {
         return e.start === this.roundTime(clickedTime)
       })
@@ -228,24 +271,11 @@ export default {
         this.$toast.error('Нельзя записаться менее чем за 24 часа')
         return
       }
-      const event = {
-        type: {
-          _id: '6221d6203962a189d7ade049',
-          name: 'Занято',
-          color: 'primary'
-        },
-        start: createStart,
-        end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
-        instructor: this.record.instructor,
-        student: this.record.student,
-        cost: this.user.course.driving.cost,
-        timed: true,
-        status: '623190b8926bff909550602c',
-        isNewEvent: true,
-      }
-      this.newEvents.push(event)
-      this.$store.commit('addEvent', event)
-      this.addPayment(event)
+
+      this.newEvents.push(newEvent)
+      this.$store.commit('updateEvent', newEvent)
+      // this.$store.commit('addEvent', newEvent)
+      this.addPayment(newEvent)
     },
     roundTime(time, down = true) {
       const roundTo = 90 // minutes

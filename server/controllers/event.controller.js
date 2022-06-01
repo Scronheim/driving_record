@@ -23,7 +23,7 @@ exports.addEvents = async (req, res) => {
 }
 
 exports.getEvents = async (req, res) => {
-  const events = await getEvents()
+  const events = await Event.find({})
   return jsonResponse(res, events)
 }
 
@@ -35,84 +35,4 @@ exports.getEventTypes = async (req, res) => {
 exports.getEventStatuses = async (req, res) => {
   const types = await EventStatus.find({})
   return jsonResponse(res, types)
-}
-
-async function getEvents() {
-  return Event.aggregate([
-    {
-      $lookup: {
-        from: 'event_types',
-        localField: 'type',
-        foreignField: '_id',
-        as: 'type'
-      }
-    },
-    {
-      $lookup: {
-        from: 'event_statuses',
-        localField: 'status',
-        foreignField: '_id',
-        as: 'status'
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'instructor',
-        foreignField: '_id',
-        as: 'instructor'
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'student',
-        foreignField: '_id',
-        as: 'student'
-      }
-    },
-    {$unwind: '$type'},
-    {$unwind: '$status'},
-    {$unwind: '$instructor'},
-    {$unwind: '$student'},
-    {$sort: {start: -1}},
-  ])
-}
-
-
-async function getUserEvents(userId) {
-  return Event.aggregate([
-    {
-      $match: {
-        $or: [{instructor: ObjectId(userId)}, {student: ObjectId(userId)}]
-      }
-    },
-    {
-      $lookup: {
-        from: 'event_types',
-        localField: 'type',
-        foreignField: '_id',
-        as: 'type'
-      }
-    },
-    {
-      $lookup: {
-        from: 'instructors',
-        localField: 'instructor',
-        foreignField: '_id',
-        as: 'instructor'
-      }
-    },
-    {
-      $lookup: {
-        from: 'students',
-        localField: 'student',
-        foreignField: '_id',
-        as: 'student'
-      }
-    },
-    {$unwind: '$type'},
-    {$unwind: '$instructor'},
-    {$unwind: '$student'},
-  ])
 }
