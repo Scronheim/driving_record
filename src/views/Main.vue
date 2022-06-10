@@ -100,7 +100,7 @@
             :events="events"
             @click:date="viewDay"
             @click:event="addEvent"
-
+            :event-more="false"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
             first-time="08:00"
@@ -109,7 +109,6 @@
             :interval-format="intervalFormatter"
         >
           <template v-slot:event="{ event }">
-<!--            <strong>{{ event.name }} {{ event.student._id === user._id? 'Вами': 'другим учеником' }}</strong><br/>-->
             <strong>{{ event.type.name }}</strong> {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
           </template>
         </v-calendar>
@@ -129,7 +128,7 @@ export default {
     },
     filteredInstructors() {
       return this.$store.getters.instructors.filter((i) => {
-        return ((this.instructorFilter === '') || (i.name.toUpperCase().indexOf(this.instructorFilter.toUpperCase()) >= 0))
+        return i.disabled === false
       })
     },
     chunkedInstructors() {
@@ -168,7 +167,7 @@ export default {
       week: 'Неделя',
       day: 'День',
     },
-    type: 'week',
+    type: 'month',
     types: [
       {text: 'День', value: 'day'},
       {text: 'Неделя', value: 'week'},
@@ -231,7 +230,7 @@ export default {
         this.$toast.error('Можно записаться только на 2 занятия в 1 день')
         return
       }
-      if (event.event.type._id !== '6221d6183962a189d7ade048' && event.event.color === 'error') { // Свободно
+      if (event.event.type._id !== '6221d6183962a189d7ade048') { // Свободно
         this.$toast.error('Можно выбирать время только со статусом "Свободно"')
         return
       }

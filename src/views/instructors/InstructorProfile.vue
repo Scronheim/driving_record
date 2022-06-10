@@ -44,40 +44,7 @@
                 </v-btn>
               </template>
 
-              <v-card>
-                <v-list dense>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="#FFE4B5">Нет записи</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="success">Свободно</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="error">Занято</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="#F4A460">Неявка</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="#008CFF">Экзамен</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn small color="#B88527">Внутренний экзамен</v-btn>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-              </v-card>
+              <Statuses/>
             </v-menu>
             <v-btn text outlined color="success" @click="saveNewEvents">Сохранить</v-btn>
           </v-col>
@@ -121,7 +88,8 @@
             :type="type"
             :events="events"
             @click:date="viewDay"
-            @click:event="showEventDialog"
+            @click:event="cancelEvent"
+            @contextmenu:event="showContextMenu"
             @mousedown:time="addEvent"
             :event-overlap-mode="mode"
             :event-overlap-threshold="30"
@@ -136,63 +104,36 @@
               {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
             </div>
           </template>
+          <template v-slot:day-label="data">
+            {{ data.day }}
+            <v-select dense outlined v-if="data.future" :items="itemsForFillDay" @change="fillDay($event, data)" :value="0"/>
+          </template>
         </v-calendar>
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="eventDialog" max-width="60%" :fullscreen="$vuetify.breakpoint.mobile">
-      <v-card>
-        <v-card-title>Просмотр записи</v-card-title>
-        <v-card-text>
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-school'"/>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ currentEvent.student.name }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-clock-start'"/>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ currentEvent.start | humanDateTime }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-clock-end'"/>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ currentEvent.end | humanDateTime }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-phone'"/>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ currentEvent.student.phone }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn text outlined color="error" @click="eventDialog = false">Закрыть</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-menu
+        v-model="contextMenu.visible"
+        :position-x="contextMenu.x"
+        :position-y="contextMenu.y"
+        absolute
+        offset-y
+        offset-x
+        offset-overflow
+    >
+      <Statuses :current-event="currentEvent"/>
+    </v-menu>
 
   </v-container>
 </template>
 
 <script>
 import dayjs from 'dayjs'
+import Statuses from '@/components/Statuses'
+
 export default {
   name: 'InstructorProfile',
+  components: {Statuses},
   computed: {
     instructor() {
       if (this.$store.getters.instructors.length > 0) {
@@ -214,12 +155,22 @@ export default {
     },
   },
   data: () => ({
+    contextMenu: {
+      visible: false,
+      x: 0,
+      y:0,
+    },
+    itemsForFillDay: [
+      {value: 0, text: 'Выберите условие', disabled: true},
+      {value: 1, text: 'День свободен'},
+      {value: 2, text: 'День нерабочий'},
+    ],
     typeToLabel: {
       month: 'Месяц',
       week: 'Неделя',
       day: 'День',
     },
-    type: 'week',
+    type: 'month',
     types: [
       {text: 'День', value: 'day'},
       {text: 'Неделя', value: 'week'},
@@ -236,6 +187,54 @@ export default {
     },
   }),
   methods: {
+    showContextMenu(e) {
+      e.nativeEvent.preventDefault()
+      this.currentEvent = e.event
+      this.contextMenu.visible = false
+      this.contextMenu.x = e.nativeEvent.clientX
+      this.contextMenu.y = e.nativeEvent.clientY
+      this.$nextTick(() => {
+        this.contextMenu.visible = true
+      })
+    },
+    fillDay(value, data) {
+      let eventType
+      if (value === 1) {
+        eventType = {
+          _id: '6221d6183962a189d7ade048',
+          name: 'Свободно',
+          color: 'success'
+        }
+      } else if (value === 2) {
+        eventType = {
+          _id: '6221d6063962a189d7ade047',
+          name: 'Нет записи',
+          color: '#FFE4B5'
+        }
+      }
+      let createStart = dayjs(data.date).add(8, 'h')
+      const eventIndex = this.events.findIndex((e) => {
+        return e.start === parseInt(createStart.format('x'))
+      })
+      if (eventIndex !== -1) {
+        this.$store.commit('removeEvents', {eventIndex, count: 10})
+      }
+      for (let i = 1; i < 11; i++) {
+        if (i > 1) {
+          createStart = createStart.add(1.5, 'h')
+        }
+        const event = {
+          type: eventType,
+          start: parseInt(createStart.format('x')),
+          end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
+          instructor: {_id: this.instructor._id},
+          timed: true,
+          status: '623190b8926bff909550602c',
+          isNewEvent: true,
+        }
+        this.$store.commit('addEvent', event)
+      }
+    },
     async saveNewEvents() {
       const newEvents = this.events.filter((e) => {
         return e.isNewEvent
@@ -246,20 +245,25 @@ export default {
     async addEvent(tms) {
       const clickedTime = this.toTime(tms)
       const createStart = this.roundTime(clickedTime)
-      const event = {
-        type: {
-          _id: '6221d6183962a189d7ade048',
-          name: 'Свободно',
-          color: 'success'
-        },
-        start: createStart,
-        end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
-        instructor: {_id: this.instructor._id},
-        timed: true,
-        status: '623190b8926bff909550602c',
-        isNewEvent: true,
+      const eventExist = this.events.find((e) => {
+        return e.start === createStart
+      })
+      if (!eventExist) {
+        const event = {
+          type: {
+            _id: '6221d6183962a189d7ade048',
+            name: 'Свободно',
+            color: 'success'
+          },
+          start: createStart,
+          end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
+          instructor: {_id: this.instructor._id},
+          timed: true,
+          status: '623190b8926bff909550602c',
+          isNewEvent: true,
+        }
+        this.$store.commit('addEvent', event)
       }
-      this.$store.commit('addEvent', event)
     },
     roundTime(time, down = true) {
       const roundTo = 90 // minutes
@@ -272,9 +276,6 @@ export default {
     toTime(tms) {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime()
     },
-    setToday () {
-      this.focus = ''
-    },
     prev () {
       this.$refs.calendar.prev()
     },
@@ -285,9 +286,13 @@ export default {
       this.focus = date
       this.type = 'day'
     },
-    showEventDialog(event) {
-      this.currentEvent = event.event
-      this.eventDialog = true
+    cancelEvent(event) {
+      const eventIndex = this.events.findIndex((e) => {
+        return e.start === event.event.start
+      })
+      if (eventIndex > -1) {
+        this.$store.commit('removeEvent', eventIndex)
+      }
     },
     intervalFormatter(locale) {
       return locale.time

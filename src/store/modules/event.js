@@ -22,6 +22,9 @@ const eventModule = {
     removeEvent(state, eventIndex) {
       state.events.splice(eventIndex, 1)
     },
+    removeEvents(state, payload) {
+      state.events.splice(payload.eventIndex, payload.count)
+    },
     updateEvent(state, event) {
       const events = state.events.filter((e) => {
         return e._id !== event._id
