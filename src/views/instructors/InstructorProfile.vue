@@ -44,7 +44,7 @@
                 </v-btn>
               </template>
 
-              <Statuses/>
+              <Statuses readonly/>
             </v-menu>
             <v-btn text outlined color="success" @click="saveNewEvents">Сохранить</v-btn>
           </v-col>
@@ -95,7 +95,7 @@
             :event-overlap-threshold="30"
             first-time="08:00"
             :interval-minutes="90"
-            :interval-count="10"
+            :interval-count="9"
             :interval-format="intervalFormatter"
         >
           <template v-slot:event="{ event }">
@@ -119,9 +119,8 @@
         absolute
         offset-y
         offset-x
-        offset-overflow
-    >
-      <Statuses :current-event="currentEvent"/>
+        offset-overflow>
+      <Statuses :readonly="false" :current-event="currentEvent"/>
     </v-menu>
 
   </v-container>
@@ -219,7 +218,7 @@ export default {
       if (eventIndex !== -1) {
         this.$store.commit('removeEvents', {eventIndex, count: 10})
       }
-      for (let i = 1; i < 11; i++) {
+      for (let i = 1; i < 10; i++) {
         if (i > 1) {
           createStart = createStart.add(1.5, 'h')
         }
@@ -287,12 +286,17 @@ export default {
       this.type = 'day'
     },
     cancelEvent(event) {
-      const eventIndex = this.events.findIndex((e) => {
-        return e.start === event.event.start
-      })
-      if (eventIndex > -1) {
-        this.$store.commit('removeEvent', eventIndex)
+      if (event.event._id) {
+        this.$store.dispatch('removeEvent', event.event._id)
+      } else {
+        const eventIndex = this.$store.getters.events.findIndex((e) => {
+          return e.start === event.event.start && e.instructor._id === this.instructor._id
+        })
+        if (eventIndex > -1) {
+          this.$store.commit('removeEvent', eventIndex)
+        }
       }
+      this.$toast.success('Событие удалено')
     },
     intervalFormatter(locale) {
       return locale.time

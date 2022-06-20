@@ -2,32 +2,32 @@
   <v-list dense>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="#FFE4B5" @click="updateCurrentEvent('noRecord')">Нет записи</v-btn>
+        <v-btn text small color="#FFE4B5" @click="updateCurrentEvent('noRecord')">Нет записи</v-btn>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="success" @click="updateCurrentEvent('free')">Свободно</v-btn>
+        <v-btn text small color="success" @click="updateCurrentEvent('free')">Свободно</v-btn>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="error" @click="updateCurrentEvent('busy')">Занято</v-btn>
+        <v-btn text small color="error" @click="updateCurrentEvent('busy')">Занято</v-btn>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="#F4A460" @click="updateCurrentEvent('absence')">Неявка</v-btn>
+        <v-btn text small color="#F4A460" @click="updateCurrentEvent('absence')">Неявка</v-btn>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="#008CFF" @click="updateCurrentEvent('exam')">Экзамен</v-btn>
+        <v-btn text small color="#008CFF" @click="updateCurrentEvent('exam')">Экзамен</v-btn>
       </v-list-item-content>
     </v-list-item>
     <v-list-item>
       <v-list-item-content>
-        <v-btn small color="#B88527" @click="updateCurrentEvent('innerExam')">Внутренний экзамен</v-btn>
+        <v-btn text small color="#B88527" @click="updateCurrentEvent('innerExam')">Внутренний экзамен</v-btn>
       </v-list-item-content>
     </v-list-item>
   </v-list>
@@ -37,12 +37,17 @@
 export default {
   name: "Statuses",
   props: {
+    readonly: {
+      type: Boolean,
+      default: true,
+    },
     currentEvent: {
       type: Object,
     }
   },
   methods: {
     updateCurrentEvent(eventType) {
+      if (this.readonly) return
       let type
       switch (eventType) {
         case 'noRecord':
@@ -88,7 +93,10 @@ export default {
           }
           break
       }
+      this.currentEvent.isNewEvent = true
       this.currentEvent.type = type
+      this.$store.dispatch('updateEvent', this.currentEvent)
+      this.$toast.success('Тип обновлён')
     }
   }
 }

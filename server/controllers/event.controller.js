@@ -13,12 +13,20 @@ exports.updateEvent = async (req, res) => {
 }
 
 exports.removeEvent = async (req, res) => {
-  await Event.findOneAndDelete(req.body.id)
+  await Event.findOneAndDelete({_id: req.body.id})
   return jsonResponse(res, null, null, true, 200)
 }
 
 exports.addEvents = async (req, res) => {
-  await Event.insertMany(req.body)
+  const events = req.body
+  for (const e of events) {
+    if (e._id) {
+      await Event.findOneAndUpdate({_id: e._id}, e, {upsert: true, new: true})
+    } else {
+      const newEvent = new Event(e)
+      await newEvent.save()
+    }
+  }
   return jsonResponse(res, null, null, true, 201)
 }
 

@@ -105,9 +105,8 @@
             :event-overlap-threshold="30"
             first-time="08:00"
             :interval-minutes="90"
-            :interval-count="9"
-            :interval-format="intervalFormatter"
-        >
+            :interval-count="8"
+            :interval-format="intervalFormatter">
           <template v-slot:event="{ event }">
             <strong>{{ event.type.name }}</strong> {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
           </template>
