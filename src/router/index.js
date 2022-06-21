@@ -110,6 +110,9 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, from, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    return next()
+  }
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (store.getters.isLogin) {
       return next()
@@ -120,8 +123,7 @@ router.beforeEach((to, from, next) => {
       return next()
     }
     return next('/')
-  }
-  else {
+  } else {
     return next()
   }
 })

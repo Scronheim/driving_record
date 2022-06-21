@@ -96,17 +96,19 @@
             first-time="08:00"
             :interval-minutes="90"
             :interval-count="9"
-            :interval-format="intervalFormatter"
-        >
+            :interval-format="intervalFormatter">
+          <template v-slot:day-label="data">
+            <v-select dense outlined v-if="data.future" :items="itemsForFillDay" @change="fillDay($event, data)" :value="0"/>
+          </template>
+          <template v-slot:day-label-header="data">
+            {{ data.day }}
+            <v-select dense outlined v-if="data.future" :items="itemsForFillDay" @change="fillDay($event, data)" :value="0"/>
+          </template>
           <template v-slot:event="{ event }">
             <div class="v-event-draggable">
               <strong>{{ event.name }}</strong>
               {{ formatEventTime(event.start) }} - {{ formatEventTime(event.end) }}
             </div>
-          </template>
-          <template v-slot:day-label="data">
-            {{ data.day }}
-            <v-select dense outlined v-if="data.future" :items="itemsForFillDay" @change="fillDay($event, data)" :value="0"/>
           </template>
         </v-calendar>
       </v-card-text>
@@ -169,7 +171,7 @@ export default {
       week: 'Неделя',
       day: 'День',
     },
-    type: 'month',
+    type: 'week',
     types: [
       {text: 'День', value: 'day'},
       {text: 'Неделя', value: 'week'},
@@ -212,7 +214,7 @@ export default {
         }
       }
       let createStart = dayjs(data.date).add(8, 'h')
-      const eventIndex = this.events.findIndex((e) => {
+      const eventIndex = this.$store.getters.events.findIndex((e) => {
         return e.start === parseInt(createStart.format('x'))
       })
       if (eventIndex !== -1) {
@@ -227,6 +229,7 @@ export default {
           start: parseInt(createStart.format('x')),
           end: parseInt(dayjs(createStart).add(1.5, 'h').format('x')),
           instructor: {_id: this.instructor._id},
+          duration: 90,
           timed: true,
           status: '623190b8926bff909550602c',
           isNewEvent: true,
