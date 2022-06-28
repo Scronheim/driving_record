@@ -3,7 +3,7 @@
     <v-data-table style="background-color: #363636"
         dense no-data-text="Нет данных"
         :headers="eventHeaders"
-        :items="studentEvents"
+        :items="userEvents"
         :item-class="rowClass"
         @contextmenu:row="show"
     >
@@ -55,13 +55,17 @@
         {{ item.start | humanTime }} - {{ item.end | humanTime }}
       </template>
       <template v-slot:item.cost="{item}">
+        <template v-if="item.cost">
         {{ item.cost }}р.
+        </template>
       </template>
       <template v-slot:item.instructor="{item}">
         {{ item.instructor.name }} ({{ item.instructor.phone }})
       </template>
       <template v-slot:item.student="{item}">
-        {{ item.student.name }} ({{ item.student.phone }})
+        <template v-if="item.student">
+          {{ item.student.name }} ({{ item.student.phone }})
+        </template>
       </template>
       <template v-slot:item.status="{item}">
         <v-edit-dialog v-if="$store.getters.isAdmin"
@@ -121,7 +125,7 @@ import dayjs from 'dayjs'
 export default {
   name: "StudentEvents",
   props: {
-    studentEvents: {
+    userEvents: {
       type: Array,
       required: true,
     }
@@ -131,20 +135,20 @@ export default {
       return this.$store.getters.eventStatuses
     },
     totalEvents() {
-      return this.studentEvents.length
+      return this.userEvents.length
     },
     totalFinished() {
-      return this.studentEvents.filter((e) => {
+      return this.userEvents.filter((e) => {
         return e.status._id === '623190de926bff909550602e'
       }).length
     },
     totalPlaned() {
-      return this.studentEvents.filter((e) => {
+      return this.userEvents.filter((e) => {
         return e.status._id === '623190b8926bff909550602c'
       }).length
     },
     totalAbsence() {
-      return this.studentEvents.filter((e) => {
+      return this.userEvents.filter((e) => {
         return e.status._id === '623190e8926bff909550602f'
       }).length
     },

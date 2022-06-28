@@ -3,27 +3,22 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-img
-              height="150px"
-              src="https://cdn.pixabay.com/photo/2020/07/12/07/47/bee-5396362_1280.jpg"
-          >
-            <v-card-title class="mt-7">
-              <v-avatar size="56" color="primary">
-                {{ splittedUserName[0] }}{{ splittedUserName[1] }}
-              </v-avatar>
-              <p class="ml-3 mt-3">
-                {{ user.name }}
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon color="success" v-on="on" @click="updateUser">
-                      <v-icon>mdi-content-save</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Сохранить</span>
-                </v-tooltip>
-              </p>
-            </v-card-title>
-          </v-img>
+          <v-card-title class="mt-7">
+            <v-avatar size="56" color="primary">
+              {{ splittedUserName[0] }}{{ splittedUserName[1] }}
+            </v-avatar>
+            <p class="ml-3 mt-3">
+              {{ user.name }}
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon color="success" v-on="on" @click="updateUser">
+                    <v-icon>mdi-content-save</v-icon>
+                  </v-btn>
+                </template>
+                <span>Сохранить</span>
+              </v-tooltip>
+            </p>
+          </v-card-title>
           <MobileProfile v-if="$vuetify.breakpoint.mobile"
                          :user="user"
                          @changePassword="changePasswordDialog = true"

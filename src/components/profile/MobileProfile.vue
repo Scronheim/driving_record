@@ -36,14 +36,14 @@
     <template v-if="!$store.getters.isAdmin">
       <v-row>
         <v-col>
-          <StudentEvents :student-events="$store.getters.studentEvents"/>
+          <StudentEvents :user-events="$store.getters.userEvents"/>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <StudentPayments :student="user" :student-payments="$store.getters.studentPayments"/>
-        </v-col>
-      </v-row>
+<!--      <v-row>-->
+<!--        <v-col>-->
+<!--          <StudentPayments :student="user" :student-payments="$store.getters.studentPayments"/>-->
+<!--        </v-col>-->
+<!--      </v-row>-->
     </template>
   </v-card-text>
 </template>
@@ -51,11 +51,11 @@
 <script>
 import dayjs from 'dayjs'
 import StudentEvents from '@/components/student/StudentEvents'
-import StudentPayments from '@/components/student/StudentPayments'
+// import StudentPayments from '@/components/student/StudentPayments'
 
 export default {
   name: "DesktopProfile",
-  components: {StudentEvents, StudentPayments},
+  components: {StudentEvents},
   props: {
     user: {
       type: Object,

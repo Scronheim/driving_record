@@ -135,6 +135,9 @@ import Statuses from '@/components/Statuses'
 export default {
   name: 'InstructorProfile',
   components: {Statuses},
+  mounted() {
+    this.test()
+  },
   computed: {
     instructor() {
       if (this.$store.getters.instructors.length > 0) {
@@ -188,6 +191,9 @@ export default {
     },
   }),
   methods: {
+    test() {
+
+    },
     showContextMenu(e) {
       e.nativeEvent.preventDefault()
       this.currentEvent = e.event
@@ -213,14 +219,12 @@ export default {
           color: '#FFE4B5'
         }
       }
-      let createStart = dayjs(data.date).add(8, 'h')
-      const eventIndex = this.$store.getters.events.findIndex((e) => {
-        return e.start === parseInt(createStart.format('x'))
+      const existEvents = this.$store.getters.events.filter((e) => {
+        return dayjs(e.start).startOf('d').format('x') !== dayjs(data.date).startOf('d').format('x')
       })
-      if (eventIndex !== -1) {
-        this.$store.commit('removeEvents', {eventIndex, count: 10})
-      }
-      for (let i = 1; i < 10; i++) {
+      this.$store.commit('setEvents', existEvents)
+      let createStart = dayjs(data.date).add(8, 'h')
+      for (let i = 1; i < 9; i++) {
         if (i > 1) {
           createStart = createStart.add(1.5, 'h')
         }

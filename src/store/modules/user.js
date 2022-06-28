@@ -155,9 +155,12 @@ const userModule = {
         return e.student._id === state.user._id
       })
     },
-    instructorEvents(state, getters, rootState, rootGetters) {
+    userEvents(state, getters, rootState, rootGetters) {
       return rootGetters.events.filter((e) => {
-        return e.instructor._id === state.user._id
+        if (e.instructor) {
+          return e.instructor._id === state.user._id
+        }
+        return e.student._id === state.user._id
       })
     },
     studentPayments: state => state.user.payments,

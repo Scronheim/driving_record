@@ -35,7 +35,7 @@
         <v-card flat color="#363636" v-if="$store.getters.isAdmin">
           <v-card-title>Занятия</v-card-title>
           <v-card-text>
-            <StudentEvents :student-events="studentEvents"/>
+            <StudentEvents :user-events="studentEvents"/>
           </v-card-text>
         </v-card>
       </v-card-text>
