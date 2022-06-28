@@ -201,6 +201,7 @@ export default {
       car: {},
     },
     newInstructor: {
+      added: true,
       name: null,
       password: null,
       email: null,

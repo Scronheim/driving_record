@@ -93,6 +93,7 @@ export default {
     ],
     registerForm: false,
     user: {
+      added: false,
       email: null,
       name: null,
       school: null,

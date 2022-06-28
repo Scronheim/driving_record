@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "buildAndUpload": "vue-cli-service build && scp -r ./dist/* root@server:/srv/front",
+    "buildAndUpload": "vue-cli-service build && scp -r ./dist/* root@89.223.127.100:/srv/front",
+    "upload": "scp -r ./dist/* root@89.223.127.100:/srv/front",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

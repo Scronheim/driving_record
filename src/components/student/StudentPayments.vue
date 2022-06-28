@@ -23,9 +23,9 @@
         <v-col>
           <b>Экзамен:</b> {{ totalExam }}р.
         </v-col>
-        <v-col>
-          <b>Остаток:</b> {{ balanceLeft }}р.
-        </v-col>
+<!--        <v-col>-->
+<!--          <b>Остаток:</b> {{ balanceLeft }}р.-->
+<!--        </v-col>-->
       </v-row>
     </template>
     <template v-slot:item.date="{item}">
@@ -106,6 +106,9 @@ export default {
       }, 0)
     },
     totalDriving() {
+      return this.totalRealMoney - this.totalExam - this.totalTheory - this.totalAdditionalDriving
+    },
+    totalDrivingInEvents() {
       const driving = this.student.payments.filter((p) => {
         return p.type === '622f0b6c86788d850dc496f4' // тип вождение
       })
